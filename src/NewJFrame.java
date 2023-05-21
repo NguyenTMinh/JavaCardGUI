@@ -1,4 +1,5 @@
 
+import java.awt.CardLayout;
 import javax.swing.JOptionPane;
 
 /*
@@ -13,13 +14,18 @@ import javax.swing.JOptionPane;
  */
 public class NewJFrame extends javax.swing.JFrame {
     private SmartCardWord smartCardWord;
+    private CardLayout cardLayout;
 
     /**
      * Creates new form NewJFrame
      */
     public NewJFrame() {
         initComponents();
+        setTitle("Java Card OS");
+        setSize(600, 600);
+        setResizable(false);
         smartCardWord = new SmartCardWord();
+        cardLayout = (CardLayout) parentPanel.getLayout();
     }
 
     /**
@@ -31,44 +37,179 @@ public class NewJFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
+        parentPanel = new javax.swing.JPanel();
+        entryPanel = new javax.swing.JPanel();
+        connectButton = new javax.swing.JButton();
+        pinButton = new javax.swing.JButton();
+        createPinPanel = new javax.swing.JPanel();
+        back1Button = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        pinTextField = new javax.swing.JTextField();
+        pinConfirmTextField = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        createPinButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        getContentPane().setLayout(new javax.swing.OverlayLayout(getContentPane()));
 
-        jButton1.setText("Connect");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        parentPanel.setLayout(new java.awt.CardLayout());
+
+        connectButton.setText("Connect");
+        connectButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                eventConnectted(evt);
+                connectCard(evt);
             }
         });
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(290, 290, 290)
-                .addComponent(jButton1)
-                .addContainerGap(291, Short.MAX_VALUE))
+        pinButton.setText("Tạo PIN");
+        pinButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openCreatePinPanel(evt);
+            }
+        });
+
+        javax.swing.GroupLayout entryPanelLayout = new javax.swing.GroupLayout(entryPanel);
+        entryPanel.setLayout(entryPanelLayout);
+        entryPanelLayout.setHorizontalGroup(
+            entryPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(entryPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(entryPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(connectButton, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(pinButton, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(467, Short.MAX_VALUE))
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(242, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addGap(149, 149, 149))
+        entryPanelLayout.setVerticalGroup(
+            entryPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(entryPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(connectButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(28, 28, 28)
+                .addComponent(pinButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(382, Short.MAX_VALUE))
         );
+
+        parentPanel.add(entryPanel, "card2");
+
+        back1Button.setText("Back");
+        back1Button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                backToEntry(evt);
+            }
+        });
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel1.setText("KHỞI TẠO PIN CHO THẺ");
+
+        pinConfirmTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pinConfirmTextFieldActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("Nhập PIN:");
+
+        jLabel3.setText("Nhập lại PIN:");
+
+        createPinButton.setText("Xác nhận");
+        createPinButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                createPin(evt);
+            }
+        });
+
+        javax.swing.GroupLayout createPinPanelLayout = new javax.swing.GroupLayout(createPinPanel);
+        createPinPanel.setLayout(createPinPanelLayout);
+        createPinPanelLayout.setHorizontalGroup(
+            createPinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(createPinPanelLayout.createSequentialGroup()
+                .addGroup(createPinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(createPinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(createPinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(createPinPanelLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(back1Button, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(createPinPanelLayout.createSequentialGroup()
+                                .addGap(186, 186, 186)
+                                .addComponent(jLabel1)))
+                        .addGroup(createPinPanelLayout.createSequentialGroup()
+                            .addContainerGap()
+                            .addGroup(createPinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(jLabel2)
+                                .addComponent(jLabel3))
+                            .addGap(18, 18, 18)
+                            .addGroup(createPinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(pinConfirmTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)
+                                .addComponent(pinTextField, javax.swing.GroupLayout.Alignment.TRAILING))))
+                    .addGroup(createPinPanelLayout.createSequentialGroup()
+                        .addGap(224, 224, 224)
+                        .addComponent(createPinButton, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(205, Short.MAX_VALUE))
+        );
+        createPinPanelLayout.setVerticalGroup(
+            createPinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, createPinPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addGap(52, 52, 52)
+                .addGroup(createPinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(pinTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addGap(24, 24, 24)
+                .addGroup(createPinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(pinConfirmTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addGap(30, 30, 30)
+                .addComponent(createPinButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 204, Short.MAX_VALUE)
+                .addComponent(back1Button, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        parentPanel.add(createPinPanel, "card3");
+
+        getContentPane().add(parentPanel);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void eventConnectted(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eventConnectted
+    private void connectCard(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectCard
         // TODO add your handling code here:
-        boolean check = smartCardWord.connect();
-        if (check) {
-            JOptionPane.showMessageDialog(rootPane, "Ket noi thanh cong");
+        connectCard();
+    }//GEN-LAST:event_connectCard
+
+    private void openCreatePinPanel(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openCreatePinPanel
+        pinTextField.setText(null);
+        pinConfirmTextField.setText(null);
+        cardLayout.show(parentPanel, "card3");
+    }//GEN-LAST:event_openCreatePinPanel
+
+    private void backToEntry(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backToEntry
+        cardLayout.show(parentPanel, "card2");
+    }//GEN-LAST:event_backToEntry
+
+    private void createPin(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createPin
+        String pin = pinTextField.getText();
+        String pinConfirm = pinConfirmTextField.getText();
+        if (pin.length() != 4) {
+            JOptionPane.showMessageDialog(parentPanel, "Mã PIN cần có độ dài là 4");
+            return;
         }
-    }//GEN-LAST:event_eventConnectted
+        if (!pinConfirm.equals(pin)) {
+            JOptionPane.showMessageDialog(parentPanel, "Mã PIN không giống, kiểm tra lại");
+            return;
+        }
+        if (!pin.matches("\\d+")) {
+            JOptionPane.showMessageDialog(parentPanel, "Mã PIN chỉ chứa số 0-9");
+            return;
+        }
+        smartCardWord.createPin(pin);
+    }//GEN-LAST:event_createPin
+
+    private void pinConfirmTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pinConfirmTextFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_pinConfirmTextFieldActionPerformed
 
     /**
      * @param args the command line arguments
@@ -106,6 +247,31 @@ public class NewJFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton back1Button;
+    private javax.swing.JButton connectButton;
+    private javax.swing.JButton createPinButton;
+    private javax.swing.JPanel createPinPanel;
+    private javax.swing.JPanel entryPanel;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JPanel parentPanel;
+    private javax.swing.JButton pinButton;
+    private javax.swing.JTextField pinConfirmTextField;
+    private javax.swing.JTextField pinTextField;
     // End of variables declaration//GEN-END:variables
+
+    private void connectCard() {
+        if (smartCardWord.isConnected()) {
+            connectButton.setText("Connect");
+            smartCardWord.disconnect();
+            JOptionPane.showMessageDialog(rootPane, "Ngắt kết nối thành công");
+        } else {
+            connectButton.setText("Disconnect");
+            boolean check = smartCardWord.connectAndSelectDefaultApplet();
+            if (check) {
+                JOptionPane.showMessageDialog(rootPane, "Kết nối thành công");
+            }
+        }
+    }
 }

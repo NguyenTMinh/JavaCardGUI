@@ -1,5 +1,7 @@
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.smartcardio.Card;
 import javax.smartcardio.CardChannel;
 import javax.smartcardio.CardException;
@@ -25,6 +27,7 @@ public class SmartCardWord {
     public static final String RESPONSE_SUCCESS = "9000";
     public static final String RESPONSE_DISABLED = "6400";
     
+    private boolean connected;
     private Card card;
     private TerminalFactory factory;
     private CardChannel channel;
@@ -43,7 +46,7 @@ public class SmartCardWord {
         
     }
     
-    public boolean connect() {
+    public boolean connectAndSelectDefaultApplet() {
         try {
            card = terminal.connect(CARD_NAME);
            channel = card.getBasicChannel();
@@ -53,8 +56,10 @@ public class SmartCardWord {
            responseAPDU = channel.transmit(new CommandAPDU(0x00, (byte)0xA4, 0x04, 0x00, AID_APPLET));
            String check = Integer.toHexString(responseAPDU.getSW());
            if (check.equals(RESPONSE_SUCCESS)) {
+               connected = true;
                return true;
            } else if (check.equals(RESPONSE_DISABLED)) {
+               connected = true;
                JOptionPane.showMessageDialog(null, "Thẻ đã bị vô hiệu hóa");
                return true;
            } else {
@@ -70,10 +75,98 @@ public class SmartCardWord {
     public boolean disconnect() {
         try {
             card.disconnect(false);
+            connected = false;
             return true;
         } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
+    }
+    
+    public boolean isConnected() {
+        return connected;
+    }
+    
+    private boolean sendCommand(byte ins, byte p1, byte p2, byte[] data, ResponseDataWrapper resp) {
+        if (channel != null) {
+            try {
+                responseAPDU = 
+                        channel.transmit(new CommandAPDU(0x00, ins, p1, p2, data));
+                String check = Integer.toHexString(responseAPDU.getSW());
+                resp.setData(responseAPDU.getData());
+                if (check.equals(RESPONSE_SUCCESS)) {
+                    connected = true;
+                    return true;
+                } else {
+                    return false;
+                }
+            } catch (CardException ex) {
+                Logger.getLogger(SmartCardWord.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return false;
+    }
+    
+    public void createPin(String pin) {
+        byte[] data = new byte[pin.length()];
+        for (int i = 0; i < pin.length(); i++) {
+            data[i] = (byte)pin.charAt(i);
+        }
+        ResponseDataWrapper responseDataWrapper = new ResponseDataWrapper();
+        boolean res = 
+                sendCommand(Constant.INS_CREATE_PIN, Constant.NO_VALUE, Constant.NO_VALUE, data, responseDataWrapper);
+        if (res) {
+            System.out.println(responseDataWrapper.getData());
+            if (responseDataWrapper.getData() == Constant.RESPONSE_PIN_CREATE_SUCCESS) {
+                JOptionPane.showMessageDialog(null, "Tạo PIN thành công");
+            } else if (responseDataWrapper.getData() == Constant.RESPONSE_PIN_ALREADY_CREATED){
+                JOptionPane.showMessageDialog(null, "Mã PIN đã được tạo, vui lòng thực "
+                        + "hiện chúc năng khác hoặc liên hệ admin để reset");
+            }
+        } else {
+            JOptionPane.showConfirmDialog(null, "Tạo PIN thất bại");
+        }
+    }
+    
+    public boolean checkPin(String pin) {
+        byte[] data = new byte[pin.length()];
+        for (int i = 0; i < pin.length(); i++) {
+            data[i] = (byte)pin.charAt(i);
+        }
+        ResponseDataWrapper responseDataWrapper = new ResponseDataWrapper();
+        boolean res = 
+                sendCommand(Constant.INS_CHECK_PIN, Constant.NO_VALUE, Constant.NO_VALUE, data, responseDataWrapper);
+        if (res) {
+            if (responseDataWrapper.getData() == Constant.RESPONSE_PIN_CHECK_TRUE) {
+                return true;
+            } else if (responseDataWrapper.getData() == Constant.RESPONSE_PIN_CHECK_FALSE){
+                return false;
+            } else if (responseDataWrapper.getData() == Constant.RESPONSE_PIN_CHECK_REACH_LIMIT) {
+                JOptionPane.showMessageDialog(null, "Nhập mật khẩu sai quá số lần quy định, vui lòng liên hệ admin để mở khóa");
+                return false;
+            }
+        } 
+        
+        JOptionPane.showMessageDialog(null, "Mật khẩu pin không đúng");
+        return false;
+    }
+    
+    public void changePin(String pin) {
+        byte[] data = new byte[pin.length()];
+        for (int i = 0; i < pin.length(); i++) {
+            data[i] = (byte)pin.charAt(i);
+        }
+        ResponseDataWrapper responseDataWrapper = new ResponseDataWrapper();
+        boolean res = 
+                sendCommand(Constant.INS_CHANGE_PIN, Constant.NO_VALUE, Constant.NO_VALUE, data, responseDataWrapper);
+        if (res) {
+            if (responseDataWrapper.getData() == Constant.RESPONSE_PIN_CREATE_SUCCESS) {
+                JOptionPane.showMessageDialog(null, "Thay đổi pin thành công");
+            } else {
+                JOptionPane.showMessageDialog(null, "Thay đổi pin thất bại");
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Thay đổi pin thất bại");
+        }
     }
 }

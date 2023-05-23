@@ -20,5 +20,8 @@ public class Constant {
     
     public static final byte RESPONSE_PIN_ALREADY_CREATED = (byte)0x2A;
     public static final byte RESPONSE_PIN_CREATE_SUCCESS = (byte)0x2B;
+    public static final byte RESPONSE_PIN_CHECK_TRUE = (byte)0x2C; 
+    public static final byte RESPONSE_PIN_CHECK_FALSE = (byte)0x2D;
+    public static final byte RESPONSE_PIN_CHECK_REACH_LIMIT = (byte)0x2E;
     public static final byte NO_VALUE = (byte)0x00;
 }

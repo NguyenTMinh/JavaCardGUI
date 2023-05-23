@@ -127,4 +127,46 @@ public class SmartCardWord {
             JOptionPane.showConfirmDialog(null, "Tạo PIN thất bại");
         }
     }
+    
+    public boolean checkPin(String pin) {
+        byte[] data = new byte[pin.length()];
+        for (int i = 0; i < pin.length(); i++) {
+            data[i] = (byte)pin.charAt(i);
+        }
+        ResponseDataWrapper responseDataWrapper = new ResponseDataWrapper();
+        boolean res = 
+                sendCommand(Constant.INS_CHECK_PIN, Constant.NO_VALUE, Constant.NO_VALUE, data, responseDataWrapper);
+        if (res) {
+            if (responseDataWrapper.getData() == Constant.RESPONSE_PIN_CHECK_TRUE) {
+                return true;
+            } else if (responseDataWrapper.getData() == Constant.RESPONSE_PIN_CHECK_FALSE){
+                return false;
+            } else if (responseDataWrapper.getData() == Constant.RESPONSE_PIN_CHECK_REACH_LIMIT) {
+                JOptionPane.showMessageDialog(null, "Nhập mật khẩu sai quá số lần quy định, vui lòng liên hệ admin để mở khóa");
+                return false;
+            }
+        } 
+        
+        JOptionPane.showMessageDialog(null, "Mật khẩu pin không đúng");
+        return false;
+    }
+    
+    public void changePin(String pin) {
+        byte[] data = new byte[pin.length()];
+        for (int i = 0; i < pin.length(); i++) {
+            data[i] = (byte)pin.charAt(i);
+        }
+        ResponseDataWrapper responseDataWrapper = new ResponseDataWrapper();
+        boolean res = 
+                sendCommand(Constant.INS_CHANGE_PIN, Constant.NO_VALUE, Constant.NO_VALUE, data, responseDataWrapper);
+        if (res) {
+            if (responseDataWrapper.getData() == Constant.RESPONSE_PIN_CREATE_SUCCESS) {
+                JOptionPane.showMessageDialog(null, "Thay đổi pin thành công");
+            } else {
+                JOptionPane.showMessageDialog(null, "Thay đổi pin thất bại");
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Thay đổi pin thất bại");
+        }
+    }
 }

@@ -1,5 +1,7 @@
 
 import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Dimension;
 import javax.swing.JOptionPane;
 
 /*
@@ -20,13 +22,16 @@ public class NewJFrame extends javax.swing.JFrame {
      * Creates new form NewJFrame
      */
     public NewJFrame() {
-        initComponents();
+        setSize(800, 600);
         setTitle("Java Card OS");
-        setSize(600, 600);
+        
+        initComponents();
+        
         setResizable(false);
         smartCardWord = new SmartCardWord();
         cardLayout = (CardLayout) parentPanel.getLayout();
         
+        setBackgroundColor();
         enableFunction(false);
     }
 
@@ -44,6 +49,7 @@ public class NewJFrame extends javax.swing.JFrame {
         connectButton = new javax.swing.JButton();
         pinButton = new javax.swing.JButton();
         openChangePinButtion = new javax.swing.JButton();
+        openAdminPanel = new javax.swing.JButton();
         createPinPanel = new javax.swing.JPanel();
         back1Button = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
@@ -62,6 +68,8 @@ public class NewJFrame extends javax.swing.JFrame {
         oldPinTextField = new javax.swing.JTextField();
         backButton1 = new javax.swing.JButton();
         confirmButton = new javax.swing.JButton();
+        adminPanel = new javax.swing.JPanel();
+        backButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new javax.swing.OverlayLayout(getContentPane()));
@@ -89,6 +97,13 @@ public class NewJFrame extends javax.swing.JFrame {
             }
         });
 
+        openAdminPanel.setText("Admin");
+        openAdminPanel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                adminFunction(evt);
+            }
+        });
+
         javax.swing.GroupLayout entryPanelLayout = new javax.swing.GroupLayout(entryPanel);
         entryPanel.setLayout(entryPanelLayout);
         entryPanelLayout.setHorizontalGroup(
@@ -99,21 +114,27 @@ public class NewJFrame extends javax.swing.JFrame {
                     .addComponent(connectButton, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(pinButton, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(openChangePinButtion, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(408, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 562, Short.MAX_VALUE)
+                .addComponent(openAdminPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         entryPanelLayout.setVerticalGroup(
             entryPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(entryPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(connectButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(entryPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(connectButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(openAdminPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(28, 28, 28)
                 .addComponent(pinButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(27, 27, 27)
                 .addComponent(openChangePinButtion, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(234, Short.MAX_VALUE))
+                .addContainerGap(403, Short.MAX_VALUE))
         );
 
         parentPanel.add(entryPanel, "card2");
+
+        createPinPanel.setPreferredSize(new java.awt.Dimension(800, 600));
 
         back1Button.setText("Back");
         back1Button.addActionListener(new java.awt.event.ActionListener() {
@@ -142,34 +163,35 @@ public class NewJFrame extends javax.swing.JFrame {
             createPinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(createPinPanelLayout.createSequentialGroup()
                 .addGroup(createPinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(createPinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addGroup(createPinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(createPinPanelLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(back1Button, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(createPinPanelLayout.createSequentialGroup()
-                                .addGap(186, 186, 186)
-                                .addComponent(jLabel1)))
-                        .addGroup(createPinPanelLayout.createSequentialGroup()
-                            .addContainerGap()
-                            .addGroup(createPinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(jLabel2)
-                                .addComponent(jLabel3))
-                            .addGap(18, 18, 18)
-                            .addGroup(createPinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(pinConfirmTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)
-                                .addComponent(pinTextField, javax.swing.GroupLayout.Alignment.TRAILING))))
                     .addGroup(createPinPanelLayout.createSequentialGroup()
-                        .addGap(224, 224, 224)
-                        .addComponent(createPinButton, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(146, Short.MAX_VALUE))
+                        .addContainerGap()
+                        .addComponent(back1Button, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(createPinPanelLayout.createSequentialGroup()
+                        .addGap(219, 219, 219)
+                        .addGroup(createPinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(createPinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addGroup(createPinPanelLayout.createSequentialGroup()
+                                    .addGap(92, 92, 92)
+                                    .addComponent(jLabel1))
+                                .addGroup(createPinPanelLayout.createSequentialGroup()
+                                    .addGroup(createPinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(jLabel2)
+                                        .addComponent(jLabel3))
+                                    .addGap(18, 18, 18)
+                                    .addGroup(createPinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(pinConfirmTextField, javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(pinTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(createPinPanelLayout.createSequentialGroup()
+                                .addGap(130, 130, 130)
+                                .addComponent(createPinButton, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap(288, Short.MAX_VALUE))
         );
         createPinPanelLayout.setVerticalGroup(
             createPinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, createPinPanelLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(43, 43, 43)
                 .addComponent(jLabel1)
-                .addGap(52, 52, 52)
+                .addGap(112, 112, 112)
                 .addGroup(createPinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(pinTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
@@ -179,12 +201,14 @@ public class NewJFrame extends javax.swing.JFrame {
                     .addComponent(jLabel3))
                 .addGap(30, 30, 30)
                 .addComponent(createPinButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 128, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 207, Short.MAX_VALUE)
                 .addComponent(back1Button, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
         parentPanel.add(createPinPanel, "card3");
+
+        changePinPanel.setPreferredSize(new java.awt.Dimension(800, 600));
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel4.setText("ĐỔI PIN CHO THẺ");
@@ -216,10 +240,10 @@ public class NewJFrame extends javax.swing.JFrame {
             .addGroup(changePinPanelLayout.createSequentialGroup()
                 .addGroup(changePinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(changePinPanelLayout.createSequentialGroup()
-                        .addGap(181, 181, 181)
-                        .addComponent(jLabel4))
+                        .addContainerGap()
+                        .addComponent(backButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(changePinPanelLayout.createSequentialGroup()
-                        .addGap(101, 101, 101)
+                        .addGap(235, 235, 235)
                         .addGroup(changePinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(changePinPanelLayout.createSequentialGroup()
                                 .addComponent(jLabel7)
@@ -232,22 +256,24 @@ public class NewJFrame extends javax.swing.JFrame {
                                 .addGap(18, 18, 18)
                                 .addGroup(changePinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(newPinConfirmTextField, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(newPinTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                    .addGroup(changePinPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(backButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(139, Short.MAX_VALUE))
+                                    .addComponent(newPinTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                .addContainerGap(272, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, changePinPanelLayout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(confirmButton, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(207, 207, 207))
+                .addGroup(changePinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, changePinPanelLayout.createSequentialGroup()
+                        .addComponent(confirmButton, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(339, 339, 339))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, changePinPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addGap(307, 307, 307))))
         );
         changePinPanelLayout.setVerticalGroup(
             changePinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(changePinPanelLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(52, 52, 52)
                 .addComponent(jLabel4)
-                .addGap(41, 41, 41)
+                .addGap(58, 58, 58)
                 .addGroup(changePinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(oldPinTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7))
@@ -259,14 +285,40 @@ public class NewJFrame extends javax.swing.JFrame {
                 .addGroup(changePinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(newPinConfirmTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6))
-                .addGap(32, 32, 32)
+                .addGap(37, 37, 37)
                 .addComponent(confirmButton, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 80, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 188, Short.MAX_VALUE)
                 .addComponent(backButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
         parentPanel.add(changePinPanel, "card4");
+
+        backButton2.setText("Back");
+        backButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                backToEntry(evt);
+            }
+        });
+
+        javax.swing.GroupLayout adminPanelLayout = new javax.swing.GroupLayout(adminPanel);
+        adminPanel.setLayout(adminPanelLayout);
+        adminPanelLayout.setHorizontalGroup(
+            adminPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(adminPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(backButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(686, Short.MAX_VALUE))
+        );
+        adminPanelLayout.setVerticalGroup(
+            adminPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, adminPanelLayout.createSequentialGroup()
+                .addContainerGap(547, Short.MAX_VALUE)
+                .addComponent(backButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        parentPanel.add(adminPanel, "card5");
 
         getContentPane().add(parentPanel);
 
@@ -336,6 +388,11 @@ public class NewJFrame extends javax.swing.JFrame {
         cardLayout.show(parentPanel, "card4");
     }//GEN-LAST:event_openChangePinPanel
 
+    private void adminFunction(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_adminFunction
+        // TODO add your handling code here:
+        cardLayout.show(parentPanel, "card5");
+    }//GEN-LAST:event_adminFunction
+
     /**
      * @param args the command line arguments
      */
@@ -372,8 +429,10 @@ public class NewJFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel adminPanel;
     private javax.swing.JButton back1Button;
     private javax.swing.JButton backButton1;
+    private javax.swing.JButton backButton2;
     private javax.swing.JPanel changePinPanel;
     private javax.swing.JButton confirmButton;
     private javax.swing.JButton connectButton;
@@ -390,6 +449,7 @@ public class NewJFrame extends javax.swing.JFrame {
     private javax.swing.JTextField newPinConfirmTextField;
     private javax.swing.JTextField newPinTextField;
     private javax.swing.JTextField oldPinTextField;
+    private javax.swing.JButton openAdminPanel;
     private javax.swing.JButton openChangePinButtion;
     private javax.swing.JPanel parentPanel;
     private javax.swing.JButton pinButton;
@@ -403,12 +463,14 @@ public class NewJFrame extends javax.swing.JFrame {
             smartCardWord.disconnect();
             JOptionPane.showMessageDialog(rootPane, "Ngắt kết nối thành công");
             enableFunction(false);
+            entryPanel.setBackground(Color.red);
         } else {
             boolean check = smartCardWord.connectAndSelectDefaultApplet();
             if (check) {
                 connectButton.setText("Disconnect");
                 JOptionPane.showMessageDialog(rootPane, "Kết nối thành công");
                 enableFunction(true);
+                entryPanel.setBackground(Color.GREEN);
             }
         }
     }
@@ -417,4 +479,10 @@ public class NewJFrame extends javax.swing.JFrame {
         pinButton.setEnabled(enable);
         openChangePinButtion.setEnabled(enable);
     }
+
+    private void setBackgroundColor() {
+        entryPanel.setOpaque(true);
+        entryPanel.setBackground(Color.red);
+    }
+    
 }

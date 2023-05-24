@@ -124,7 +124,7 @@ public class SmartCardWord {
                         + "hiện chúc năng khác hoặc liên hệ admin để reset");
             }
         } else {
-            JOptionPane.showConfirmDialog(null, "Tạo PIN thất bại");
+            JOptionPane.showMessageDialog(null, "Tạo PIN thất bại");
         }
     }
     
@@ -140,6 +140,7 @@ public class SmartCardWord {
             if (responseDataWrapper.getData() == Constant.RESPONSE_PIN_CHECK_TRUE) {
                 return true;
             } else if (responseDataWrapper.getData() == Constant.RESPONSE_PIN_CHECK_FALSE){
+                JOptionPane.showMessageDialog(null, "Mật khẩu không đúng, vui lòng thử lại");
                 return false;
             } else if (responseDataWrapper.getData() == Constant.RESPONSE_PIN_CHECK_REACH_LIMIT) {
                 JOptionPane.showMessageDialog(null, "Nhập mật khẩu sai quá số lần quy định, vui lòng liên hệ admin để mở khóa");

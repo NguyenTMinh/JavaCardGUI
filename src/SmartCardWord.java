@@ -170,4 +170,28 @@ public class SmartCardWord {
             JOptionPane.showMessageDialog(null, "Thay đổi pin thất bại");
         }
     }
+    
+    public  void unlockCard(String password) {
+        byte[] data = new byte[password.length()];
+        for (int i = 0; i < password.length(); i++) {
+            data[i] = (byte)password.charAt(i);
+        }
+        ResponseDataWrapper responseDataWrapper = new ResponseDataWrapper();
+        boolean res = 
+                sendCommand(Constant.INS_UNLOCK_CARD, Constant.NO_VALUE, Constant.NO_VALUE, data, responseDataWrapper);
+        if (res) {
+            if (responseDataWrapper.getDataAll().length== 4) {
+                StringBuilder pin = new StringBuilder();
+                for (int i = 0; i < responseDataWrapper.getDataAll().length; i++) {
+                    pin.append((char)responseDataWrapper.getDataAll()[i]);
+                }
+                
+                JOptionPane.showMessageDialog(null, "Mở khóa thẻ thành công, mật khẩu: " + pin);
+            } else if (responseDataWrapper.getData() == Constant.RESPONSE_PIN_CHECK_FALSE) {
+                JOptionPane.showMessageDialog(null, "Mật khẩu không đúng, mở khóa thẻ thất bại");
+            }
+        } else {
+             JOptionPane.showMessageDialog(null, "Có lỗi xảy ra thử lại sau");
+        }
+    }
 }

@@ -16,7 +16,8 @@ public class Constant {
     public static final byte INS_CHANGE_PIN = (byte)0x01;
     // minh: ins kiem tra ma pin
     public static final byte INS_CHECK_PIN = (byte)0x02;
-    
+    // minh: chuc nang unlock the
+    public static final byte INS_UNLOCK_CARD = (byte)0x03;
     
     public static final byte RESPONSE_PIN_ALREADY_CREATED = (byte)0x2A;
     public static final byte RESPONSE_PIN_CREATE_SUCCESS = (byte)0x2B;

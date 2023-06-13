@@ -1,0 +1,3 @@
+SELECT * FROM sinhvien;
+
+INSERT INTO sinhvien(name,gender,date,phone,studentid,class) VALUES (N'Nguyễn Trọng Minh',0,'2001-11-20','0351234567','CT040132','CT4A');

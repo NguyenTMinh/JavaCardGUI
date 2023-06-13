@@ -327,7 +327,7 @@ public class SmartCardWord {
      * Lay thong tin Sinh vien trong the len
      * @return 
      */
-    public SinhVien getInfoCard() {
+    public SinhVien getInfoCard() { 
         if (connected) {
             ResponseDataWrapper data = new ResponseDataWrapper();
             boolean status = sendCommand(Constant.INS_GET_DATA, Constant.PARAM_ID, Constant.NO_VALUE, Constant.NO_DATA, data);
@@ -377,6 +377,12 @@ public class SmartCardWord {
         return null;
     }
     
+    /**
+     * Xoa sach thong tin trong the, dua thong tin trong the ve trang thai trang
+     * @param pin
+     * @param panel
+     * @return 
+     */
     public boolean resetInfo(String pin, JPanel panel) {
         ResponseDataWrapper wrapper = new ResponseDataWrapper();
         boolean res = sendCommand(Constant.INS_RESET_DATA, Constant.NO_VALUE, Constant.NO_VALUE, pin.getBytes(), wrapper);
@@ -392,6 +398,14 @@ public class SmartCardWord {
             JOptionPane.showMessageDialog(panel, "Có lỗi xảy ra, thử lại sau!");
         }
         
+        return false;
+    }
+    
+    /**
+     * Thuc hien viec update trang thai gui xe xuong the, dong thoi cap nhap lich su gui xe xuong the
+     * @return 
+     */
+    public boolean checkInOrOutVehicle() {
         return false;
     }
 }

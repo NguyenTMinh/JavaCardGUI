@@ -1588,6 +1588,7 @@ public class NewJFrame extends javax.swing.JFrame {
     private void flushInfoCard(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_flushInfoCard
         // TODO add your handling code here:
         flushInfoCard();
+        // TODO nap thong tin xe
     }//GEN-LAST:event_flushInfoCard
 
     private void openCleanInfoTab(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openCleanInfoTab
@@ -1834,6 +1835,7 @@ public class NewJFrame extends javax.swing.JFrame {
         panelFlushInfo.setBackground(Color.WHITE);
         panelEditInfo.setBackground(Color.WHITE);
         panelNothing.setBackground(Color.WHITE);
+        panelCleanInfo.setBackground(Color.WHITE);
         // SV
         panelChangePin.setBackground(Color.WHITE);
         // Gui xe

@@ -30,6 +30,7 @@ import javax.swing.table.DefaultTableModel;
 import model.LichSuMuonSach;
 import model.Sach;
 import model.SinhVien;
+import model.Xe;
 import util.Util;
 
 /*
@@ -60,16 +61,19 @@ public class NewJFrame extends javax.swing.JFrame {
     // sv function
     private static final String SV_CARD_NAME = "card9";
     private static final String CHANGE_PIN_CARD_NAME = "card4";
+    private static final String NOTHING_3_NAME = "card6";
     // gui xe function
     private static final String GUI_XE_FUNCTION_CARD_NAME = "card7";
     private static final String GUI_XE_CARD_NAME = "card3";
     private static final String LICH_SU_GUI_XE_CARD_NAME = "card2";
+    private static final String NOTHING_2_NAME = "card6";
     // thu vien function
     private static final String THU_VIEN_CARD_NAME = "card8";
     private static final String SACH_THU_VIEN_CARD_NAME = "card2";
     private static final String LICH_SU_SACH_CARD_NAME = "card3";
     private static final String MUON_SACH_CARD_NAME = "card4";
     private static final String TRA_SACH_CARD_NAME = "card5";
+    private static final String NOTHING_1_NAME = "card6";
 
     private static final String PATH_LOGO = "D:\\DELL\\Pictures\\logo.png";
     // SV function var
@@ -321,6 +325,8 @@ public class NewJFrame extends javax.swing.JFrame {
         buttonLichSuGuiXe = new javax.swing.JButton();
         buttonGuiXeTab = new javax.swing.JButton();
         panelGuiXeContainer = new javax.swing.JPanel();
+        panelNothing1 = new javax.swing.JPanel();
+        labelLogo1 = new javax.swing.JLabel();
         panelLichSuGuiXe = new javax.swing.JPanel();
         jLabel21 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -344,6 +350,8 @@ public class NewJFrame extends javax.swing.JFrame {
         buttonMuonSach = new javax.swing.JButton();
         buttonTraSach = new javax.swing.JButton();
         panelThuVienContainer = new javax.swing.JPanel();
+        panelNothing2 = new javax.swing.JPanel();
+        labelLogo2 = new javax.swing.JLabel();
         panelSachThuVien = new javax.swing.JPanel();
         jLabel28 = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
@@ -376,6 +384,8 @@ public class NewJFrame extends javax.swing.JFrame {
         panelSVFunction = new javax.swing.JPanel();
         backButton5 = new javax.swing.JButton();
         panelSVContainer = new javax.swing.JPanel();
+        panelNothing3 = new javax.swing.JPanel();
+        labelLogo3 = new javax.swing.JLabel();
         panelChangePin = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
@@ -745,7 +755,7 @@ public class NewJFrame extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel16))
                     .addComponent(labelAvatarSV, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(panelEditInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tf_SoDienThoaiSV, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(buttonChooseAvatar))
@@ -897,6 +907,25 @@ public class NewJFrame extends javax.swing.JFrame {
 
         panelGuiXeContainer.setLayout(new java.awt.CardLayout());
 
+        javax.swing.GroupLayout panelNothing1Layout = new javax.swing.GroupLayout(panelNothing1);
+        panelNothing1.setLayout(panelNothing1Layout);
+        panelNothing1Layout.setHorizontalGroup(
+            panelNothing1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelNothing1Layout.createSequentialGroup()
+                .addGap(218, 218, 218)
+                .addComponent(labelLogo1, javax.swing.GroupLayout.PREFERRED_SIZE, 304, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(245, Short.MAX_VALUE))
+        );
+        panelNothing1Layout.setVerticalGroup(
+            panelNothing1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelNothing1Layout.createSequentialGroup()
+                .addGap(105, 105, 105)
+                .addComponent(labelLogo1, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(178, Short.MAX_VALUE))
+        );
+
+        panelGuiXeContainer.add(panelNothing1, "card6");
+
         jLabel21.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel21.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel21.setText("LỊCH SỬ GỬI XE");
@@ -965,6 +994,11 @@ public class NewJFrame extends javax.swing.JFrame {
         labelBienSoXe.setText("Wave");
 
         buttonCheckXe.setText("Gửi xe");
+        buttonCheckXe.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                checkVehicle(evt);
+            }
+        });
 
         jLabel27.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
         jLabel27.setText("Trạng thái:");
@@ -1104,6 +1138,25 @@ public class NewJFrame extends javax.swing.JFrame {
         });
 
         panelThuVienContainer.setLayout(new java.awt.CardLayout());
+
+        javax.swing.GroupLayout panelNothing2Layout = new javax.swing.GroupLayout(panelNothing2);
+        panelNothing2.setLayout(panelNothing2Layout);
+        panelNothing2Layout.setHorizontalGroup(
+            panelNothing2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelNothing2Layout.createSequentialGroup()
+                .addGap(218, 218, 218)
+                .addComponent(labelLogo2, javax.swing.GroupLayout.PREFERRED_SIZE, 304, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(208, Short.MAX_VALUE))
+        );
+        panelNothing2Layout.setVerticalGroup(
+            panelNothing2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelNothing2Layout.createSequentialGroup()
+                .addGap(105, 105, 105)
+                .addComponent(labelLogo2, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(178, Short.MAX_VALUE))
+        );
+
+        panelThuVienContainer.add(panelNothing2, "card6");
 
         jLabel28.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel28.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -1415,6 +1468,25 @@ public class NewJFrame extends javax.swing.JFrame {
 
         panelSVContainer.setLayout(new java.awt.CardLayout());
 
+        javax.swing.GroupLayout panelNothing3Layout = new javax.swing.GroupLayout(panelNothing3);
+        panelNothing3.setLayout(panelNothing3Layout);
+        panelNothing3Layout.setHorizontalGroup(
+            panelNothing3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelNothing3Layout.createSequentialGroup()
+                .addGap(218, 218, 218)
+                .addComponent(labelLogo3, javax.swing.GroupLayout.PREFERRED_SIZE, 304, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(235, Short.MAX_VALUE))
+        );
+        panelNothing3Layout.setVerticalGroup(
+            panelNothing3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelNothing3Layout.createSequentialGroup()
+                .addGap(105, 105, 105)
+                .addComponent(labelLogo3, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(178, Short.MAX_VALUE))
+        );
+
+        panelSVContainer.add(panelNothing3, "card6");
+
         panelChangePin.setPreferredSize(new java.awt.Dimension(800, 600));
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -1605,6 +1677,7 @@ public class NewJFrame extends javax.swing.JFrame {
 
     private void openGuiXeFunction(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openGuiXeFunction
         // TODO add your handling code here:
+        guiXeCardLayout.show(panelGuiXeContainer, NOTHING_1_NAME);
         cardLayout.show(parentPanel, GUI_XE_FUNCTION_CARD_NAME);
     }//GEN-LAST:event_openGuiXeFunction
 
@@ -1621,12 +1694,14 @@ public class NewJFrame extends javax.swing.JFrame {
             };
             sachTableModel.addRow(row);
         }
-
+        
+        thuVienCardLayout.show(panelThuVienContainer, NOTHING_2_NAME);
         cardLayout.show(parentPanel, THU_VIEN_CARD_NAME);
     }//GEN-LAST:event_openThuVienFunction
 
     private void openSVFunction(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openSVFunction
         // TODO add your handling code here:
+        svCardLayout.show(panelSVContainer, NOTHING_3_NAME);
         cardLayout.show(parentPanel, SV_CARD_NAME);
     }//GEN-LAST:event_openSVFunction
 
@@ -1645,6 +1720,7 @@ public class NewJFrame extends javax.swing.JFrame {
 
     private void openGuiXeTab(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openGuiXeTab
         // TODO add your handling code here:
+        loadInfoVehicle();
         guiXeCardLayout.show(panelGuiXeContainer, GUI_XE_CARD_NAME);
     }//GEN-LAST:event_openGuiXeTab
 
@@ -1734,6 +1810,17 @@ public class NewJFrame extends javax.swing.JFrame {
             cache.setSinhVien(null);
         }
     }//GEN-LAST:event_resetInfo
+
+    private void checkVehicle(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkVehicle
+        // TODO add your handling code here:
+        smartCardWord.checkInOrOutVehicle(panelMain, cache.getXe(), new Function() {
+
+            @Override
+            public void execute() {
+               //TODO cap nhat lai db o day khi gui xe thanh cong, cap nhat lai giao dien
+            }
+        });
+    }//GEN-LAST:event_checkVehicle
 
     /**
      * @param args the command line arguments
@@ -1844,6 +1931,9 @@ public class NewJFrame extends javax.swing.JFrame {
     private javax.swing.JLabel labelHangXe;
     private javax.swing.JLabel labelHoTenTraSach;
     private javax.swing.JLabel labelLogo;
+    private javax.swing.JLabel labelLogo1;
+    private javax.swing.JLabel labelLogo2;
+    private javax.swing.JLabel labelLogo3;
     private javax.swing.JLabel labelMSVTraSach;
     private javax.swing.JLabel labelMauSacXe;
     private javax.swing.JLabel labelTrangThaiXe;
@@ -1866,6 +1956,9 @@ public class NewJFrame extends javax.swing.JFrame {
     private javax.swing.JPanel panelMain;
     private javax.swing.JPanel panelMuonSach;
     private javax.swing.JPanel panelNothing;
+    private javax.swing.JPanel panelNothing1;
+    private javax.swing.JPanel panelNothing2;
+    private javax.swing.JPanel panelNothing3;
     private javax.swing.JPanel panelSVContainer;
     private javax.swing.JPanel panelSVFunction;
     private javax.swing.JPanel panelSachThuVien;
@@ -1926,6 +2019,7 @@ public class NewJFrame extends javax.swing.JFrame {
         buttonEditÌno.setEnabled(enable);
         buttonCleanInfo.setEnabled(enable);
         createPinButton.setEnabled(enable);
+        buttonGuiXeTab.setEnabled(enable);
     }
 
     private void setBackgroundColor() {
@@ -1942,14 +2036,17 @@ public class NewJFrame extends javax.swing.JFrame {
         panelNothing.setBackground(Color.WHITE);
         // SV
         panelChangePin.setBackground(Color.WHITE);
+        panelNothing3.setBackground(Color.WHITE);
         // Gui xe
         panelGuiXe.setBackground(Color.WHITE);
         panelLichSuGuiXe.setBackground(Color.WHITE);
+        panelNothing2.setBackground(Color.WHITE);
         // Thu vien
         panelSachThuVien.setBackground(Color.WHITE);
         panelLichSuSach.setBackground(Color.WHITE);
         panelMuonSach.setBackground(Color.WHITE);
         panelTraSach.setBackground(Color.WHITE);
+        panelNothing1.setBackground(Color.WHITE);
     }
 
     private void clearAllTextField() {
@@ -2103,8 +2200,42 @@ public class NewJFrame extends javax.swing.JFrame {
             BufferedImage bufferedImage = ImageIO.read(img);
             Image dimg = bufferedImage.getScaledInstance(labelLogo.getWidth(), labelLogo.getHeight(), Image.SCALE_SMOOTH);
             labelLogo.setIcon(new ImageIcon(dimg));
+            labelLogo1.setIcon(new ImageIcon(dimg));
+            labelLogo2.setIcon(new ImageIcon(dimg));
+            labelLogo3.setIcon(new ImageIcon(dimg));
         } catch (IOException ex) {
             Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void loadInfoVehicle() {
+        SinhVien sv;
+        if (cache.getSinhVien() == null) {
+            sv = smartCardWord.getInfoCard();
+            cache.setSinhVien(sv);
+        } else {
+            sv = cache.getSinhVien();
+        }
+        
+        buttonCheckXe.setEnabled(false);
+        labelHangXe.setText(Constant.KHONG_CO);
+        labelMauSacXe.setText(Constant.KHONG_CO);
+        labelBienSoXe.setText(Constant.KHONG_CO);
+        labelTrangThaiXe.setText(Constant.KHONG_CO);
+        
+        if (sv != null) {
+            Xe xe = databaseHelper.findXeBySinhVienId(sv.getId());
+            if (xe != null) {
+                cache.setXe(xe);
+                buttonCheckXe.setEnabled(true);
+                labelHangXe.setText(xe.getTenhangxe());
+                labelMauSacXe.setText(xe.getMausac());
+                labelBienSoXe.setText(xe.getBienso());
+                String tt = (xe.getStatus() == Xe.DANG_GUI_STATUS)? "Đang gửi": "Không gửi";
+                labelTrangThaiXe.setText(tt);
+                String tt2 = (xe.getStatus() == Xe.DANG_GUI_STATUS)? "Lấy xe": "Gửi xe";
+                buttonCheckXe.setText(tt2);
+            }
         }
     }
 }

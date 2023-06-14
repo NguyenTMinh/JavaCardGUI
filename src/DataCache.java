@@ -1,5 +1,6 @@
 
 import model.SinhVien;
+import model.Xe;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -14,6 +15,7 @@ import model.SinhVien;
  */
 public class DataCache {
     private SinhVien sinhVien; // Luu thong tin doi tuong sinh vien the dang 
+    private Xe xe;
 
     public SinhVien getSinhVien() {
         return sinhVien;
@@ -22,8 +24,17 @@ public class DataCache {
     public void setSinhVien(SinhVien sinhVien) {
         this.sinhVien = sinhVien;
     }
+
+    public Xe getXe() {
+        return xe;
+    }
+
+    public void setXe(Xe xe) {
+        this.xe = xe;
+    }
     
     public void clear() {
         sinhVien = null;
+        xe = null;
     }
 }

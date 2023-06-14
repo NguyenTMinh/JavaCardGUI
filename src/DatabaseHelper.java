@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import model.LichSuMuonSach;
 import model.Sach;
 import model.SinhVien;
+import model.Xe;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -48,10 +49,18 @@ public class DatabaseHelper {
     private static final String COLUMN_TRANG_THAI = "trangthai";
     
 //  Lich Su muon sach Table 
-        private static final String TABLE_LICH_SU_MUON_SACH = "lichsumuonsach";
+    private static final String TABLE_LICH_SU_MUON_SACH = "lichsumuonsach";
     private static final String COLUMN_ID_LICH_SU_MUON = "id";
     private static final String COLUMN_DATE_LICH_SU_MUON = "thoigian";
-            
+    
+    // Xe table
+    private static final String TABLE_XE = "xe";
+    private static final String COLUMN_ID_XE = "id";
+    private static final String COLUMN_TEN_XE = "tenhangxe";
+    private static final String COLUMN_MAU_SAC = "mausac";
+    private static final String COLUMN_BIEN_SO = "bienso";
+    private static final String COLUMN_STATUS_XE = "status";
+    private static final String COLUMN_ID_SV_REF = "idSV";
     
     private Connection connection;
     
@@ -230,5 +239,29 @@ public class DatabaseHelper {
         }
         
         return false;
+    }
+    
+    // ---------- Xe -----------------------
+    public Xe findXeBySinhVienId(int id) {
+        String query = "SELECT * FROM " + TABLE_XE + " WHERE idSV=" + id;
+        
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+            
+            while (resultSet.next()) {
+                Xe xe = new Xe(resultSet.getInt(COLUMN_ID_XE), 
+                        resultSet.getString(COLUMN_TEN_XE), 
+                        resultSet.getString(COLUMN_MAU_SAC), 
+                        resultSet.getString(COLUMN_BIEN_SO), 
+                        resultSet.getInt(COLUMN_STATUS_XE), 
+                        resultSet.getInt(COLUMN_ID_SV_REF));
+                return xe;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseHelper.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return null;
     }
 }

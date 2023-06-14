@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,6 +19,7 @@ import javax.smartcardio.*;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import model.SinhVien;
+import model.Xe;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -390,6 +392,35 @@ public class SmartCardWord {
             }
         } else {
             JOptionPane.showMessageDialog(panel, "Có lỗi xảy ra, thử lại sau!");
+        }
+        
+        return false;
+    }
+    
+    public boolean checkInOrOutVehicle(JPanel panel, Xe xe, Function function) {
+        int statusXe = (xe.getStatus() == Xe.DANG_GUI_STATUS)? Xe.KHONG_GUI_STATUS: Xe.DANG_GUI_STATUS;
+        Calendar calendar = Calendar.getInstance();
+        byte[] thoiGian = new byte[7];
+        thoiGian[Constant.INDEX_NGAY] = (byte) calendar.getTime().getDay();
+        thoiGian[Constant.INDEX_THANG] = (byte) calendar.getTime().getMonth();
+        String year = String.valueOf(calendar.getTime().getYear());
+        String year0 = year.substring(0, 2);
+        String year1 = year.substring(2);
+        thoiGian[Constant.INDEX_NAM_0] = (byte) Integer.parseInt(year0);
+        thoiGian[Constant.INDEX_NAM_1] = (byte) Integer.parseInt(year1);
+        thoiGian[Constant.INDEX_GIO] = (byte) calendar.getTime().getHours();
+        thoiGian[Constant.INDEX_PHUT] = (byte) calendar.getTime().getMinutes();
+        thoiGian[Constant.INDEX_GIAY] = (byte) calendar.getTime().getSeconds();
+        
+        ResponseDataWrapper wrapper = new ResponseDataWrapper();
+        boolean status = sendCommand(Constant.INS_CHECK_IN_VEHICLE, (byte)statusXe, Constant.NO_VALUE, thoiGian, wrapper);
+        if (status) {
+            if (wrapper.getData() == Constant.RESPONSE_GUI_XE_OK) {
+                function.execute();
+                String mess = (statusXe == Xe.DANG_GUI_STATUS)? "Gửi xe thành công": "Lấy xe thành công";
+                JOptionPane.showMessageDialog(panel, mess);
+                return true;
+            }
         }
         
         return false;

@@ -1,15 +1,19 @@
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import model.LichSuMuonSach;
+import model.LichsuGuiXe;
 import model.Sach;
 import model.SinhVien;
 import model.Xe;
@@ -61,6 +65,13 @@ public class DatabaseHelper {
     private static final String COLUMN_BIEN_SO = "bienso";
     private static final String COLUMN_STATUS_XE = "status";
     private static final String COLUMN_ID_SV_REF = "idSV";
+    
+    // lich su gui xe table
+    private static final String TABLE_LICH_SU_XE = "lichsuguixe";
+    private static final String COLUMN_LS_XE = "id";
+    private static final String COLUMN_LS_XE_SV = "idsv";
+    private static final String COLUMN_LS_THOI_GIAN = "thoigian";
+    private static final String COLUMN_LS_CHIEU_XE = "chieu";
     
     private Connection connection;
     
@@ -274,5 +285,47 @@ public class DatabaseHelper {
         } catch (SQLException ex) {
             Logger.getLogger(DatabaseHelper.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    // ================ Lich su gui xe =====================
+    public void addLogGuiXe(int chieu, SinhVien sv, Timestamp date) {
+        String query = "INSERT INTO " + TABLE_LICH_SU_XE + " VALUE( NULL," 
+                + sv.getId() + ",'" + date.toString() + "'," + chieu + ")";
+        try {
+            Statement statement = connection.createStatement();
+            boolean res = statement.execute(query);
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseHelper.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public List<LichsuGuiXe> getLichsuGuiXes() {
+        String query = "SELECT lichsuguixe.id as id, sinhvien.id as idsv,name,studentid,bienso,mausac, thoigian, "
+                + "chieu FROM sinhvien JOIN xe ON sinhvien.id=idSV JOIN lichsuguixe ON sinhvien.id=lichsuguixe.idsv";
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+            
+            List<LichsuGuiXe> list = new ArrayList<>();
+            
+            while (resultSet.next()) {
+                LichsuGuiXe lichsuGuiXe = new LichsuGuiXe(resultSet.getInt("id"),
+                        resultSet.getInt("idsv"), 
+                        resultSet.getString(COLUMN_NAME_SINHVIEN),
+                        resultSet.getString(COLUMN_STUDENT_ID_SINHVIEN), 
+                        resultSet.getString(COLUMN_BIEN_SO), 
+                        resultSet.getString(COLUMN_MAU_SAC), 
+                        resultSet.getTimestamp(COLUMN_DATE_LICH_SU_MUON), 
+                        resultSet.getInt(COLUMN_LS_CHIEU_XE));
+                list.add(lichsuGuiXe);
+            }
+            
+            return list;
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseHelper.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return null;
     }
 }

@@ -2,6 +2,8 @@
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -400,7 +402,7 @@ public class SmartCardWord {
     public boolean checkInOrOutVehicle(JPanel panel, Xe xe, Function function) {
         int statusXe = (xe.getStatus() == Xe.DANG_GUI_STATUS)? Xe.KHONG_GUI_STATUS: Xe.DANG_GUI_STATUS;
         Calendar calendar = Calendar.getInstance();
-        Date date = new Date(calendar.getTimeInMillis());
+        Timestamp date = new Timestamp(calendar.getTimeInMillis());
         byte[] thoiGian = new byte[7];
         thoiGian[Constant.INDEX_NGAY] = (byte) calendar.getTime().getDay();
         thoiGian[Constant.INDEX_THANG] = (byte) calendar.getTime().getMonth();

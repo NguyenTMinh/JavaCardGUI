@@ -44,11 +44,11 @@ import util.Util;
 public class NewJFrame extends javax.swing.JFrame {
 
     // Constant
-    private static final String[] COLUMN_TABLE_SINH_VIEN = {"Họ tên", "Giới tính", "Ngày sinh", "Điện thoại", "MSV", "Lớp"};
-    private static final String[] COLUMN_TABLE_LICH_SU_GUI_XE = {"Họ tên", "MSV", "Biển số", "Màu sắc", "Thời gian", "Trạng thái"};
-    private static final String[] COLUMN_TABLE_SACH_THU_VIEN = {"Mã sách", "Tên sách", "Trạng thái"};
-    private static final String[] COLUMN_TABLE_LICH_SU_MUON_SACH = {"Mã sách", "Tên sách", "Trạng thái", "Thời gian", "Sinh viên"};
-    private static final String[] COLUMN_TABLE_SACH_DANG_MUON = {"Mã sách", "Tên sách"};
+    private static final String[] COLUMN_TABLE_SINH_VIEN = {"H t�n", "Gii t�nh", "Ng�y sinh", "�in thoi", "MSV", "Lp"};
+    private static final String[] COLUMN_TABLE_LICH_SU_GUI_XE = {"H t�n", "MSV", "Bin s", "M�u sc", "Thi gian", "Trng th�i"};
+    private static final String[] COLUMN_TABLE_SACH_THU_VIEN = {"M s�ch", "T�n s�ch", "Trng th�i"};
+    private static final String[] COLUMN_TABLE_LICH_SU_MUON_SACH = {"M s�ch", "T�n s�ch", "Trng th�i", "Thi gian", "Sinh vi�n"};
+    private static final String[] COLUMN_TABLE_SACH_DANG_MUON = {"M s�ch", "T�n s�ch"};
 
     private static final String MAIN_CARD_NAME = "card6";
     // admin function
@@ -100,6 +100,7 @@ public class NewJFrame extends javax.swing.JFrame {
     private List<Sach> mListSach;
     private List<LichSuMuonSach> mListLichSuMuonSach;
     private SinhVien sinhVienCard;
+    private Sach sachCard;
     private DataCache cache;
 
     /**
@@ -199,7 +200,7 @@ public class NewJFrame extends javax.swing.JFrame {
                         Object[] row = {
                             sach.getMaSach(),
                             sach.getTenSach(),
-                            (sach.getTrangThai() == 1) ? "Đã được Mượn" : "Chưa được mượn"
+                            (sach.getTrangThai() == 1) ? "� ��c M�n" : "Ch�a ��c m�n"
                         };
                         sachTableModel.addRow(row);
                     }
@@ -215,7 +216,6 @@ public class NewJFrame extends javax.swing.JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                System.out.println("CLICKED");
                 mListLichSuMuonSach = databaseHelper.getAllHistory();
 
                 String tenSach = textFieldTimKiemLS.getText().toString().toLowerCase();
@@ -232,7 +232,7 @@ public class NewJFrame extends javax.swing.JFrame {
                         Object[] row = {
                             history.getMaSach(),
                             history.getTenSach(),
-                            (history.getTrangThai() == 1) ? "Đã được mượn" : "Chưa được mượn",
+                            (history.getTrangThai() == 1) ? "� ��c m�n" : "Ch�a ��c m�n",
                             history.getThoiGian(),
                             history.getMaSV()
                         };
@@ -245,6 +245,53 @@ public class NewJFrame extends javax.swing.JFrame {
             }
         });
 
+        buttonTimKiemMS.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                mListSach = databaseHelper.getSachChuaMuon();
+
+                String tenSach = textFieldTimKiemMS.getText().toString().toLowerCase();
+
+                List<Sach> mListSachByName = mListSach.stream()
+                        .filter(sach -> sach.getTenSach().toLowerCase().contains(tenSach))
+                        .collect(Collectors.toList());
+
+                if (mListSachByName.size() != 0) {
+                    muonSachTableModel.setRowCount(0);
+                    for (Sach sach : mListSachByName) {
+                        Object[] row = {
+                            sach.getMaSach(),
+                            sach.getTenSach(),
+                            (sach.getTrangThai() == 1) ? "� ��c M�n" : "Ch�a ��c m�n"
+                        };
+                        muonSachTableModel.addRow(row);
+                    }
+                } else {
+                    muonSachTableModel.setRowCount(0);
+
+                }
+            }
+        });
+
+        tableMuonSach.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                sachCard = mListSach.get(tableMuonSach.getSelectedRow());
+            }
+        });
+
+        buttonDoMuonSach.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = tableMuonSach.getSelectedRow();
+                SinhVien sinhVien = smartCardWord.getInfoCard();
+                muonSachTableModel.removeRow(selectedRow);
+                databaseHelper.updateMuonSach(sachCard,sinhVien);
+                databaseHelper.putUpdateToHistory(sachCard, sinhVien);
+            }
+        });
+
+// On Click Ben tren?
         setBackgroundColor();
         setLogoNothingPanel();
 
@@ -272,7 +319,7 @@ public class NewJFrame extends javax.swing.JFrame {
         labelCardStatus = new javax.swing.JLabel();
         buttonSVFunction = new javax.swing.JButton();
         panelAdminFunction = new javax.swing.JPanel();
-        buttonEditÌno = new javax.swing.JButton();
+        buttonEditno = new javax.swing.JButton();
         backButton2 = new javax.swing.JButton();
         buttonUnlockCard = new javax.swing.JButton();
         buttonFlushInfoCard = new javax.swing.JButton();
@@ -399,14 +446,14 @@ public class NewJFrame extends javax.swing.JFrame {
             }
         });
 
-        buttionAdminFunction.setText("Chức năng Admin");
+        buttionAdminFunction.setText("Chc n�ng Admin");
         buttionAdminFunction.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 adminFunction(evt);
             }
         });
 
-        buttonGuiXeFunction.setText("Gửi xe");
+        buttonGuiXeFunction.setText("Gi xe");
         buttonGuiXeFunction.setPreferredSize(new java.awt.Dimension(133, 25));
         buttonGuiXeFunction.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -414,7 +461,7 @@ public class NewJFrame extends javax.swing.JFrame {
             }
         });
 
-        buttonThuVienFunction.setText("Thư viện");
+        buttonThuVienFunction.setText("Th� vin");
         buttonThuVienFunction.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 openThuVienFunction(evt);
@@ -434,7 +481,7 @@ public class NewJFrame extends javax.swing.JFrame {
 
         labelCardStatus.setText("Card disconnected");
 
-        buttonSVFunction.setText("Sinh viên");
+        buttonSVFunction.setText("Sinh vi�n");
         buttonSVFunction.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 openSVFunction(evt);
@@ -485,8 +532,8 @@ public class NewJFrame extends javax.swing.JFrame {
 
         parentPanel.add(panelMain, "card6");
 
-        buttonEditÌno.setText("Sửa thông tin");
-        buttonEditÌno.addActionListener(new java.awt.event.ActionListener() {
+        buttonEditno.setText("Sa th�ng tin");
+        buttonEditno.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 openEditFunction(evt);
             }
@@ -499,21 +546,21 @@ public class NewJFrame extends javax.swing.JFrame {
             }
         });
 
-        buttonUnlockCard.setText("Mở khóa thẻ");
+        buttonUnlockCard.setText("M kh�a th");
         buttonUnlockCard.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 openUnlockTab(evt);
             }
         });
 
-        buttonFlushInfoCard.setText("Nạp thông tin ");
+        buttonFlushInfoCard.setText("Np th�ng tin ");
         buttonFlushInfoCard.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 openCreatePinPanel(evt);
             }
         });
 
-        buttonCleanInfo.setText("Reset thẻ");
+        buttonCleanInfo.setText("Reset th");
         buttonCleanInfo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 openCleanInfoTab(evt);
@@ -525,11 +572,11 @@ public class NewJFrame extends javax.swing.JFrame {
 
         jLabel8.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel8.setText("MỞ KHÓA THẺ");
+        jLabel8.setText("M KH�A TH");
 
-        jLabel9.setText("Nhập mật khẩu mở khóa:");
+        jLabel9.setText("Nhp mt khu m kh�a:");
 
-        unlockButton.setText("Mở khóa");
+        unlockButton.setText("M kh�a");
         unlockButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 unlockCard(evt);
@@ -575,13 +622,13 @@ public class NewJFrame extends javax.swing.JFrame {
         panelFlushInfo.setPreferredSize(new java.awt.Dimension(800, 600));
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel1.setText("NẠP THÔNG TIN THẺ");
+        jLabel1.setText("NP TH�NG TIN TH");
 
-        jLabel2.setText("Nhập PIN:");
+        jLabel2.setText("Nhp PIN:");
 
-        jLabel3.setText("Nhập lại PIN:");
+        jLabel3.setText("Nhp li PIN:");
 
-        createPinButton.setText("Xác nhận");
+        createPinButton.setText("X�c nhn");
         createPinButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 flushInfoCard(evt);
@@ -655,30 +702,30 @@ public class NewJFrame extends javax.swing.JFrame {
 
         panelAdminContainer.add(panelFlushInfo, "card3");
 
-        buttonChooseAvatar.setText("Chọn ảnh");
+        buttonChooseAvatar.setText("Chn nh");
         buttonChooseAvatar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 chooseAvatar(evt);
             }
         });
 
-        jLabel10.setText("Họ tên:");
+        jLabel10.setText("H t�n:");
 
-        jLabel11.setText("Giới tính:");
+        jLabel11.setText("Gii t�nh:");
 
         rButtonGenderMale.setText("Nam");
 
-        rButtonGenderFemale.setText("Nữ");
+        rButtonGenderFemale.setText("N");
 
-        jLabel12.setText("Ngày sinh:");
+        jLabel12.setText("Ng�y sinh:");
 
-        jLabel16.setText("Số điện thoại:");
+        jLabel16.setText("S �in thoi:");
 
-        jLabel17.setText("Mã sinh viên:");
+        jLabel17.setText("M sinh vi�n:");
 
-        jLabel18.setText("Lớp:");
+        jLabel18.setText("Lp:");
 
-        b_Updateinfo.setText("Cập nhật");
+        b_Updateinfo.setText("Cp nht");
         b_Updateinfo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 updateInfo(evt);
@@ -766,9 +813,9 @@ public class NewJFrame extends javax.swing.JFrame {
 
         jLabel19.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel19.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel19.setText("RESET DỮ LIỆU THẺ");
+        jLabel19.setText("RESET D LIU TH");
 
-        jLabel20.setText("Nhập mật khẩu mở khóa:");
+        jLabel20.setText("Nhp mt khu m kh�a:");
 
         buttonResetInfo.setText("Reset");
         buttonResetInfo.addActionListener(new java.awt.event.ActionListener() {
@@ -842,7 +889,7 @@ public class NewJFrame extends javax.swing.JFrame {
                         .addComponent(buttonUnlockCard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(backButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(buttonFlushInfoCard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(buttonEditÌno, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(buttonEditno, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(buttonCleanInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(775, Short.MAX_VALUE))
             .addGroup(panelAdminFunctionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -859,7 +906,7 @@ public class NewJFrame extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(buttonFlushInfoCard, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(buttonEditÌno, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(buttonEditno, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(buttonCleanInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 309, Short.MAX_VALUE)
@@ -881,14 +928,14 @@ public class NewJFrame extends javax.swing.JFrame {
             }
         });
 
-        buttonLichSuGuiXe.setText("Lịch sử");
+        buttonLichSuGuiXe.setText("Lch s");
         buttonLichSuGuiXe.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 openLichSuGuiXeTab(evt);
             }
         });
 
-        buttonGuiXeTab.setText("Gửi xe");
+        buttonGuiXeTab.setText("Gi xe");
         buttonGuiXeTab.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 openGuiXeTab(evt);
@@ -899,7 +946,7 @@ public class NewJFrame extends javax.swing.JFrame {
 
         jLabel21.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel21.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel21.setText("LỊCH SỬ GỬI XE");
+        jLabel21.setText("LCH S GI XE");
 
         tableLichSuGuiXe.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -941,33 +988,33 @@ public class NewJFrame extends javax.swing.JFrame {
 
         jLabel22.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel22.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel22.setText("GỬI XE");
+        jLabel22.setText("GI XE");
 
         jLabel23.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
-        jLabel23.setText("Thông tin xe:");
+        jLabel23.setText("Th�ng tin xe:");
 
         jLabel24.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
-        jLabel24.setText("Hãng xe:");
+        jLabel24.setText("Hng xe:");
 
         labelHangXe.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
         labelHangXe.setText("Wave");
 
         jLabel25.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
-        jLabel25.setText("Màu sắc:");
+        jLabel25.setText("M�u sc:");
 
         labelMauSacXe.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
         labelMauSacXe.setText("Wave");
 
         jLabel26.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
-        jLabel26.setText("Biển số:");
+        jLabel26.setText("Bin s:");
 
         labelBienSoXe.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
         labelBienSoXe.setText("Wave");
 
-        buttonCheckXe.setText("Gửi xe");
+        buttonCheckXe.setText("Gi xe");
 
         jLabel27.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
-        jLabel27.setText("Trạng thái:");
+        jLabel27.setText("Trng th�i:");
 
         labelTrangThaiXe.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
         labelTrangThaiXe.setText("Wave");
@@ -1074,28 +1121,28 @@ public class NewJFrame extends javax.swing.JFrame {
             }
         });
 
-        buttonListSach.setText("Sách thư viện");
+        buttonListSach.setText("S�ch th� vin");
         buttonListSach.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 openSachThuVienTab(evt);
             }
         });
 
-        buttonLichSuSach.setText("Lịch sử mượn sách");
+        buttonLichSuSach.setText("Lch s m�n s�ch");
         buttonLichSuSach.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 openLichSuSachTab(evt);
             }
         });
 
-        buttonMuonSach.setText("Mượn sách");
+        buttonMuonSach.setText("M�n s�ch");
         buttonMuonSach.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 openMuonSachTab(evt);
             }
         });
 
-        buttonTraSach.setText("Trả sách");
+        buttonTraSach.setText("Tr s�ch");
         buttonTraSach.setToolTipText("");
         buttonTraSach.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1107,7 +1154,7 @@ public class NewJFrame extends javax.swing.JFrame {
 
         jLabel28.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel28.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel28.setText("DỮ LIỆU SÁCH TRÊN THƯ VIỆN");
+        jLabel28.setText("D LIU S�CH TR�N TH� VIN");
 
         tableSach.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1122,7 +1169,7 @@ public class NewJFrame extends javax.swing.JFrame {
         ));
         jScrollPane3.setViewportView(tableSach);
 
-        buttonTimKiemS.setText("Tìm kiếm");
+        buttonTimKiemS.setText("Tm kim");
 
         javax.swing.GroupLayout panelSachThuVienLayout = new javax.swing.GroupLayout(panelSachThuVien);
         panelSachThuVien.setLayout(panelSachThuVienLayout);
@@ -1161,7 +1208,7 @@ public class NewJFrame extends javax.swing.JFrame {
 
         jLabel29.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel29.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel29.setText("LỊCH SỬ MƯỢN SÁCH THƯ VIỆN");
+        jLabel29.setText("LCH S M�N S�CH TH� VIN");
 
         tableLichSuSach.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1176,7 +1223,7 @@ public class NewJFrame extends javax.swing.JFrame {
         ));
         jScrollPane4.setViewportView(tableLichSuSach);
 
-        buttonTimKiemLS.setText("Tìm kiếm");
+        buttonTimKiemLS.setText("Tm kim");
 
         javax.swing.GroupLayout panelLichSuSachLayout = new javax.swing.GroupLayout(panelLichSuSach);
         panelLichSuSach.setLayout(panelLichSuSachLayout);
@@ -1215,7 +1262,7 @@ public class NewJFrame extends javax.swing.JFrame {
 
         jLabel30.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel30.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel30.setText("MƯỢN SÁCH");
+        jLabel30.setText("M�N S�CH");
 
         tableMuonSach.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1230,9 +1277,9 @@ public class NewJFrame extends javax.swing.JFrame {
         ));
         jScrollPane5.setViewportView(tableMuonSach);
 
-        buttonDoMuonSach.setText("Mượn sách");
+        buttonDoMuonSach.setText("M�n s�ch");
 
-        buttonTimKiemMS.setText("Tìm kiếm");
+        buttonTimKiemMS.setText("Tm kim");
 
         javax.swing.GroupLayout panelMuonSachLayout = new javax.swing.GroupLayout(panelMuonSach);
         panelMuonSach.setLayout(panelMuonSachLayout);
@@ -1278,17 +1325,17 @@ public class NewJFrame extends javax.swing.JFrame {
 
         jLabel31.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel31.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel31.setText("TRẢ SÁCH");
+        jLabel31.setText("TR S�CH");
 
-        labelHoTenTraSach.setText("Thông tin sinh viên:");
+        labelHoTenTraSach.setText("Th�ng tin sinh vi�n:");
 
-        jLabel33.setText("Họ tên:");
+        jLabel33.setText("H t�n:");
 
-        jLabel34.setText("Mã SV:");
+        jLabel34.setText("M SV:");
 
-        jLabel35.setText("Thông tin sinh viên:");
+        jLabel35.setText("Th�ng tin sinh vi�n:");
 
-        labelMSVTraSach.setText("Thông tin sinh viên:");
+        labelMSVTraSach.setText("Th�ng tin sinh vi�n:");
 
         tableSachDangMuon.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1303,7 +1350,7 @@ public class NewJFrame extends javax.swing.JFrame {
         ));
         jScrollPane6.setViewportView(tableSachDangMuon);
 
-        buttonDoTraSach.setText("Trả sách");
+        buttonDoTraSach.setText("Tr s�ch");
 
         javax.swing.GroupLayout panelTraSachLayout = new javax.swing.GroupLayout(panelTraSach);
         panelTraSach.setLayout(panelTraSachLayout);
@@ -1418,15 +1465,15 @@ public class NewJFrame extends javax.swing.JFrame {
         panelChangePin.setPreferredSize(new java.awt.Dimension(800, 600));
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel4.setText("ĐỔI PIN CHO THẺ");
+        jLabel4.setText("�I PIN CHO TH");
 
-        jLabel5.setText("Nhập PIN:");
+        jLabel5.setText("Nhp PIN:");
 
-        jLabel6.setText("Nhập lại PIN:");
+        jLabel6.setText("Nhp li PIN:");
 
-        jLabel7.setText("Nhập PIN cũ:");
+        jLabel7.setText("Nhp PIN c:");
 
-        confirmButton.setText("Xác nhận");
+        confirmButton.setText("X�c nhn");
         confirmButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 confirmChangePin(evt);
@@ -1483,7 +1530,7 @@ public class NewJFrame extends javax.swing.JFrame {
 
         panelSVContainer.add(panelChangePin, "card4");
 
-        openChangePinButtion.setText("Đổi PIN");
+        openChangePinButtion.setText("�i PIN");
         openChangePinButtion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 openChangePinPanel(evt);
@@ -1537,7 +1584,7 @@ public class NewJFrame extends javax.swing.JFrame {
         for (SinhVien sinhVien : listSinhVien) {
             Object[] row = {
                 sinhVien.getName(),
-                (sinhVien.getGender() == 0) ? "Nam" : "Nữ",
+                (sinhVien.getGender() == 0) ? "Nam" : "N",
                 sinhVien.getDate().toString(),
                 sinhVien.getPhone(),
                 sinhVien.getStudentId(),
@@ -1561,15 +1608,15 @@ public class NewJFrame extends javax.swing.JFrame {
             String newPin = newPinTextField.getText();
             String confirmNewPin = newPinConfirmTextField.getText();
             if (newPin.length() != 4) {
-                JOptionPane.showMessageDialog(parentPanel, "Mã PIN cần có độ dài là 4");
+                JOptionPane.showMessageDialog(parentPanel, "M PIN cn c� � d�i l� 4");
                 return;
             }
             if (!confirmNewPin.equals(newPin)) {
-                JOptionPane.showMessageDialog(parentPanel, "Mã PIN không giống, kiểm tra lại");
+                JOptionPane.showMessageDialog(parentPanel, "M PIN kh�ng ging, kim tra li");
                 return;
             }
             if (!newPin.matches("\\d+")) {
-                JOptionPane.showMessageDialog(parentPanel, "Mã PIN chỉ chứa số 0-9");
+                JOptionPane.showMessageDialog(parentPanel, "M PIN ch cha s 0-9");
                 return;
             }
             smartCardWord.changePin(newPin);
@@ -1617,7 +1664,7 @@ public class NewJFrame extends javax.swing.JFrame {
             Object[] row = {
                 sach.getMaSach(),
                 sach.getTenSach(),
-                (sach.getTrangThai() == 1) ? "Đã được Mượn" : "Chưa được mượn"
+                (sach.getTrangThai() == 1) ? "� ��c M�n" : "Ch�a ��c m�n"
             };
             sachTableModel.addRow(row);
         }
@@ -1656,7 +1703,7 @@ public class NewJFrame extends javax.swing.JFrame {
             Object[] row = {
                 sach.getMaSach(),
                 sach.getTenSach(),
-                (sach.getTrangThai() == 1) ? "Đã được Mượn" : "Chưa được mượn"
+                (sach.getTrangThai() == 1) ? "� ��c M�n" : "Ch�a ��c m�n"
             };
             sachTableModel.addRow(row);
         }
@@ -1672,7 +1719,7 @@ public class NewJFrame extends javax.swing.JFrame {
             Object[] row = {
                 history.getMaSach(),
                 history.getTenSach(),
-                (history.getTrangThai() == 1) ? "Đã được mượn" : "Chưa được mượn",
+                (history.getTrangThai() == 1) ? "� ��c m�n" : "Ch�a ��c m�n",
                 history.getThoiGian(),
                 history.getMaSV()
             };
@@ -1683,11 +1730,40 @@ public class NewJFrame extends javax.swing.JFrame {
 
     private void openMuonSachTab(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openMuonSachTab
         // TODO add your handling code here:
+        System.out.println("MUON SACH");
+        mListSach = databaseHelper.getSachChuaMuon();
+        muonSachTableModel.setRowCount(0);
+        for (Sach sach : mListSach) {
+            System.out.println(sach.getTenSach());
+            Object[] row = {
+                sach.getMaSach(),
+                sach.getTenSach(),
+                (sach.getTrangThai() == 1) ? "� ��c M�n" : "Ch�a ��c m�n"
+            };
+            muonSachTableModel.addRow(row);
+        }
         thuVienCardLayout.show(panelThuVienContainer, MUON_SACH_CARD_NAME);
     }//GEN-LAST:event_openMuonSachTab
 
     private void openTraSachTab(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openTraSachTab
         // TODO add your handling code here:
+
+//        Tra Sach
+        SinhVien sinhVien = smartCardWord.getInfoCard();
+        labelHoTenTraSach.setText(sinhVien.getName());
+        labelMSVTraSach.setText(sinhVien.getStudentId());
+        
+//        mListSach = databaseHelper.getAllSachDuocMuon();
+        sachDangMuonTableModel.setRowCount(0);
+        for (Sach sach : mListSach) {
+            System.out.println(sach.getTenSach());
+            Object[] row = {
+                sach.getMaSach(),
+                sach.getTenSach()
+            };
+            sachDangMuonTableModel.addRow(row);
+        }
+
         thuVienCardLayout.show(panelThuVienContainer, TRA_SACH_CARD_NAME);
     }//GEN-LAST:event_openTraSachTab
 
@@ -1783,7 +1859,7 @@ public class NewJFrame extends javax.swing.JFrame {
     private javax.swing.JButton buttonConnect;
     private javax.swing.JButton buttonDoMuonSach;
     private javax.swing.JButton buttonDoTraSach;
-    private javax.swing.JButton buttonEditÌno;
+    private javax.swing.JButton buttonEditno;
     private javax.swing.JButton buttonFlushInfoCard;
     private javax.swing.JButton buttonGuiXeFunction;
     private javax.swing.JButton buttonGuiXeTab;
@@ -1904,7 +1980,7 @@ public class NewJFrame extends javax.swing.JFrame {
             panelCardStatus.setBackground(Color.RED);
 
             smartCardWord.disconnect();
-            JOptionPane.showMessageDialog(rootPane, "Ngắt kết nối thành công");
+            JOptionPane.showMessageDialog(rootPane, "Ngt kt ni th�nh c�ng");
             enableFunction(false);
             clearAllData();
         } else {
@@ -1914,7 +1990,7 @@ public class NewJFrame extends javax.swing.JFrame {
                 labelCardStatus.setText("Card connected");
                 panelCardStatus.setBackground(Color.GREEN);
 
-                JOptionPane.showMessageDialog(rootPane, "Kết nối thành công");
+                JOptionPane.showMessageDialog(rootPane, "Kt ni th�nh c�ng");
                 enableFunction(true);
             }
         }
@@ -1923,7 +1999,7 @@ public class NewJFrame extends javax.swing.JFrame {
     private void enableFunction(boolean enable) {
         openChangePinButtion.setEnabled(enable);
         buttonUnlockCard.setEnabled(enable);
-        buttonEditÌno.setEnabled(enable);
+        buttonEditno.setEnabled(enable);
         buttonCleanInfo.setEnabled(enable);
         createPinButton.setEnabled(enable);
     }
@@ -1965,28 +2041,28 @@ public class NewJFrame extends javax.swing.JFrame {
         String pin = pinTextField.getText();
         String pinConfirm = pinConfirmTextField.getText();
         if (pin.length() != 4) {
-            JOptionPane.showMessageDialog(parentPanel, "Mã PIN cần có độ dài là 4");
+            JOptionPane.showMessageDialog(parentPanel, "M PIN cn c� � d�i l� 4");
             return;
         }
         if (!pinConfirm.equals(pin)) {
-            JOptionPane.showMessageDialog(parentPanel, "Mã PIN không giống, kiểm tra lại");
+            JOptionPane.showMessageDialog(parentPanel, "M PIN kh�ng ging, kim tra li");
             return;
         }
         if (!pin.matches("\\d+")) {
-            JOptionPane.showMessageDialog(parentPanel, "Mã PIN chỉ chứa số 0-9");
+            JOptionPane.showMessageDialog(parentPanel, "M PIN ch cha s 0-9");
             return;
         }
         if (sinhVienCard == null) {
-            JOptionPane.showMessageDialog(parentPanel, "Vui lòng chọn sinh viên để nạp thông tin");
+            JOptionPane.showMessageDialog(parentPanel, "Vui lng chn sinh vi�n � np th�ng tin");
             return;
         }
         try {
             boolean res = smartCardWord.flushCardInfo(sinhVienCard, Constant.INS_FLUSH_DATA);
             if (res) {
                 smartCardWord.createPin(pin);
-                JOptionPane.showMessageDialog(parentPanel, "Nạp thông tin thành công");
+                JOptionPane.showMessageDialog(parentPanel, "Np th�ng tin th�nh c�ng");
             } else {
-                JOptionPane.showMessageDialog(parentPanel, "Nạp thông tin thát bại, vui lòng thử lại");
+                JOptionPane.showMessageDialog(parentPanel, "Np th�ng tin th�t bi, vui lng th li");
             }
         } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -2055,7 +2131,7 @@ public class NewJFrame extends javax.swing.JFrame {
         if (cache.getSinhVien() != null) {
             if (textFileldEditNameSV.getText().length() <= 0 || textFieldNgaySinh.getText().length() <= 0 || tf_SoDienThoaiSV.getText().length() <= 0
                     || tf_Masinhvien.getText().length() <= 0 || tf_LopSV.getText().length() <= 0) {
-                JOptionPane.showMessageDialog(parentPanel, "Không được để trống dữ liệu");
+                JOptionPane.showMessageDialog(parentPanel, "Kh�ng ��c � trng d liu");
                 return;
             }
             String name = textFileldEditNameSV.getText();
@@ -2081,17 +2157,17 @@ public class NewJFrame extends javax.swing.JFrame {
                             boolean res = smartCardWord.flushCardInfo(sv, Constant.INS_EDIT_DATA);
                             if (res) {
                                 cache.setSinhVien(sv);
-                                JOptionPane.showMessageDialog(parentPanel, "Nạp thông tin thành công");
+                                JOptionPane.showMessageDialog(parentPanel, "Np th�ng tin th�nh c�ng");
                             } else {
-                                JOptionPane.showMessageDialog(parentPanel, "Nạp thông tin thát bại, vui lòng thử lại");
+                                JOptionPane.showMessageDialog(parentPanel, "Np th�ng tin th�t bi, vui lng th li");
                             }
                         }
                     }
                 } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(parentPanel, "Có lỗi xảy ra, vui lòng thử lại sau!");
+                    JOptionPane.showMessageDialog(parentPanel, "C� li xy ra, vui lng th li sau!");
                 }
             } catch (ParseException ex) {
-                JOptionPane.showMessageDialog(parentPanel, "Sai định dạng thời gian, vui lòng nhập đúng");
+                JOptionPane.showMessageDialog(parentPanel, "Sai �nh dng thi gian, vui lng nhp ��ng");
                 return;
             }
         }

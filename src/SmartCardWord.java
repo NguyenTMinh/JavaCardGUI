@@ -327,6 +327,9 @@ public class SmartCardWord {
      * Lay thong tin Sinh vien trong the len
      * @return 
      */
+    
+    
+    
     public SinhVien getInfoCard() {
         if (connected) {
             ResponseDataWrapper data = new ResponseDataWrapper();
@@ -376,6 +379,9 @@ public class SmartCardWord {
         
         return null;
     }
+    
+    
+    
     
     public boolean resetInfo(String pin, JPanel panel) {
         ResponseDataWrapper wrapper = new ResponseDataWrapper();

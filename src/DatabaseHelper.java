@@ -254,8 +254,8 @@ public class DatabaseHelper {
                         resultSet.getString(COLUMN_TEN_XE), 
                         resultSet.getString(COLUMN_MAU_SAC), 
                         resultSet.getString(COLUMN_BIEN_SO), 
-                        resultSet.getInt(COLUMN_STATUS_XE), 
-                        resultSet.getInt(COLUMN_ID_SV_REF));
+                        resultSet.getInt(COLUMN_ID_SV_REF), 
+                        resultSet.getInt(COLUMN_STATUS_XE));
                 return xe;
             }
         } catch (SQLException ex) {
@@ -263,5 +263,16 @@ public class DatabaseHelper {
         }
         
         return null;
+    }
+    
+    public void updateTrangThaiXe(int id, int trangThai) {
+        String query = "UPDATE " + TABLE_XE + " SET " + COLUMN_STATUS_XE + "=" + trangThai
+                + " WHERE id=" + id;
+        try {
+            Statement statement = connection.createStatement();
+            int res = statement.executeUpdate(query);
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseHelper.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

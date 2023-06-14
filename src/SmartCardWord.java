@@ -400,6 +400,7 @@ public class SmartCardWord {
     public boolean checkInOrOutVehicle(JPanel panel, Xe xe, Function function) {
         int statusXe = (xe.getStatus() == Xe.DANG_GUI_STATUS)? Xe.KHONG_GUI_STATUS: Xe.DANG_GUI_STATUS;
         Calendar calendar = Calendar.getInstance();
+        Date date = new Date(calendar.getTimeInMillis());
         byte[] thoiGian = new byte[7];
         thoiGian[Constant.INDEX_NGAY] = (byte) calendar.getTime().getDay();
         thoiGian[Constant.INDEX_THANG] = (byte) calendar.getTime().getMonth();
@@ -416,7 +417,8 @@ public class SmartCardWord {
         boolean status = sendCommand(Constant.INS_CHECK_IN_VEHICLE, (byte)statusXe, Constant.NO_VALUE, thoiGian, wrapper);
         if (status) {
             if (wrapper.getData() == Constant.RESPONSE_GUI_XE_OK) {
-                function.execute();
+                xe.setStatus(statusXe);
+                function.execute(xe, date);
                 String mess = (statusXe == Xe.DANG_GUI_STATUS)? "Gửi xe thành công": "Lấy xe thành công";
                 JOptionPane.showMessageDialog(panel, mess);
                 return true;

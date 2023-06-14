@@ -9,5 +9,5 @@
  * @author DELL
  */
 public interface Function {
-    void execute();
+    void execute(Object...objects);
 }

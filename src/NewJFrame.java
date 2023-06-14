@@ -1816,8 +1816,16 @@ public class NewJFrame extends javax.swing.JFrame {
         smartCardWord.checkInOrOutVehicle(panelMain, cache.getXe(), new Function() {
 
             @Override
-            public void execute() {
-               //TODO cap nhat lai db o day khi gui xe thanh cong, cap nhat lai giao dien
+            public void execute(Object...objects) {
+                Xe xe = (Xe) objects[0];
+                Date date = (Date) objects[1];
+                cache.setXe(xe);
+                databaseHelper.updateTrangThaiXe(xe.getId(), xe.getStatus());
+                
+                String tt = (xe.getStatus() == Xe.DANG_GUI_STATUS)? "Đang gửi": "Không gửi";
+                labelTrangThaiXe.setText(tt);
+                String tt2 = (xe.getStatus() == Xe.DANG_GUI_STATUS)? "Lấy xe": "Gửi xe";
+                buttonCheckXe.setText(tt2);
             }
         });
     }//GEN-LAST:event_checkVehicle
@@ -2225,6 +2233,7 @@ public class NewJFrame extends javax.swing.JFrame {
         
         if (sv != null) {
             Xe xe = databaseHelper.findXeBySinhVienId(sv.getId());
+            System.out.println(xe.getStatus());
             if (xe != null) {
                 cache.setXe(xe);
                 buttonCheckXe.setEnabled(true);

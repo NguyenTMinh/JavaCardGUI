@@ -34,6 +34,8 @@ public class Constant {
     public static final byte INS_RESET_DATA = (byte)0x07;
     // cap nhat trang thai gui xe, lich su gui xe
     public static final byte INS_CHECK_IN_VEHICLE = (byte)0x08;
+    // valid id the
+    public static final byte INS_VALID_ID_CARD= (byte)0x09;
     
     // Response
     public static final byte RESPONSE_PIN_ALREADY_CREATED = (byte)0x2A;

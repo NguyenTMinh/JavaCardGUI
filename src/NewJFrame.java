@@ -102,12 +102,13 @@ public class NewJFrame extends javax.swing.JFrame {
     private CardLayout thuVienCardLayout;
     private CardLayout svCardLayout;
     // Bien
-    private DatabaseHelper databaseHelper;
     private List<SinhVien> listSinhVien;
+    private DatabaseHelper databaseHelper;
     private List<Sach> mListSach;
     private List<LichSuMuonSach> mListLichSuMuonSach;
     private List<LichsuGuiXe> lichSuGuiXe;
     private SinhVien sinhVienCard;
+    private Sach sachCard;
     private DataCache cache;
 
     /**
@@ -252,9 +253,74 @@ public class NewJFrame extends javax.swing.JFrame {
                 }
             }
         });
-        
-        // lich su gui xe
 
+        buttonTimKiemMS.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                mListSach = databaseHelper.getSachChuaMuon();
+
+                String tenSach = textFieldTimKiemMS.getText().toString().toLowerCase();
+
+                List<Sach> mListSachByName = mListSach.stream()
+                        .filter(sach -> sach.getTenSach().toLowerCase().contains(tenSach))
+                        .collect(Collectors.toList());
+
+                if (mListSachByName.size() != 0) {
+                    muonSachTableModel.setRowCount(0);
+                    for (Sach sach : mListSachByName) {
+                        Object[] row = {
+                            sach.getMaSach(),
+                            sach.getTenSach(),
+                            (sach.getTrangThai() == 1) ? "Đã được mượn" : "Chưa được mượn"
+                        };
+                        muonSachTableModel.addRow(row);
+                    }
+                } else {
+                    muonSachTableModel.setRowCount(0);
+
+                }
+            }
+        });
+
+        tableMuonSach.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                sachCard = mListSach.get(tableMuonSach.getSelectedRow());
+            }
+        });
+
+        buttonDoMuonSach.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = tableMuonSach.getSelectedRow();
+                SinhVien sinhVien = smartCardWord.getInfoCard();
+                muonSachTableModel.removeRow(selectedRow);
+                sachCard.setTrangThai(1);
+                databaseHelper.updateMuonSach(sachCard, sinhVien);
+                databaseHelper.putUpdateToHistory(sachCard, sinhVien);
+            }
+        });
+        
+        tableSachDangMuon.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                sachCard = mListSach.get(tableSachDangMuon.getSelectedRow());
+            }
+        });
+        
+        buttonDoTraSach.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = tableSachDangMuon.getSelectedRow();
+                SinhVien sinhVien = smartCardWord.getInfoCard();
+                sachDangMuonTableModel.removeRow(selectedRow);
+                sachCard.setTrangThai(0);
+                databaseHelper.updateMuonSach(sachCard, sinhVien);
+                databaseHelper.putUpdateToHistory(sachCard, sinhVien);
+            }
+        });
+
+        // lich su gui xe
         setBackgroundColor();
         setLogoNothingPanel();
 
@@ -1699,7 +1765,7 @@ public class NewJFrame extends javax.swing.JFrame {
             };
             sachTableModel.addRow(row);
         }
-        
+
         thuVienCardLayout.show(panelThuVienContainer, NOTHING_2_NAME);
         cardLayout.show(parentPanel, THU_VIEN_CARD_NAME);
     }//GEN-LAST:event_openThuVienFunction
@@ -1721,14 +1787,14 @@ public class NewJFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         lichSuGuiXe = databaseHelper.getLichsuGuiXes();
         guiXeTableModel.setRowCount(0);
-        for (LichsuGuiXe ls: lichSuGuiXe) {
+        for (LichsuGuiXe ls : lichSuGuiXe) {
             Object[] row = {
                 ls.getName(),
                 ls.getStudentId(),
                 ls.getBienso(),
                 ls.getMausac(),
                 ls.getDate().toString(),
-                (ls.getChieu() == Xe.DANG_GUI_STATUS)? "Gửi xe":"Lấy xe"
+                (ls.getChieu() == Xe.DANG_GUI_STATUS) ? "Gửi xe" : "Lấy xe"
             };
             guiXeTableModel.addRow(row);
         }
@@ -1765,7 +1831,7 @@ public class NewJFrame extends javax.swing.JFrame {
             Object[] row = {
                 history.getMaSach(),
                 history.getTenSach(),
-                (history.getTrangThai() == 1) ? "Đã được mượn" : "Chưa được mượn",
+                (history.getTrangThai() == 1) ? "Mượn sách" : "Trả sách",
                 history.getThoiGian(),
                 history.getMaSV()
             };
@@ -1776,11 +1842,37 @@ public class NewJFrame extends javax.swing.JFrame {
 
     private void openMuonSachTab(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openMuonSachTab
         // TODO add your handling code here:
+        System.out.println("MUON SACH");
+        mListSach = databaseHelper.getSachChuaMuon();
+        muonSachTableModel.setRowCount(0);
+        for (Sach sach : mListSach) {
+            System.out.println(sach.getTenSach());
+            Object[] row = {
+                sach.getMaSach(),
+                sach.getTenSach(),
+                (sach.getTrangThai() == 1) ? "Đã được mượn" : "Chưa được mượn"
+            };
+            muonSachTableModel.addRow(row);
+        }
         thuVienCardLayout.show(panelThuVienContainer, MUON_SACH_CARD_NAME);
     }//GEN-LAST:event_openMuonSachTab
 
     private void openTraSachTab(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openTraSachTab
         // TODO add your handling code here:
+        SinhVien sinhVien = smartCardWord.getInfoCard();
+        labelHoTenTraSach.setText(sinhVien.getName());
+        labelMSVTraSach.setText(sinhVien.getStudentId());
+
+        mListSach = databaseHelper.getAllSachDuocMuon(sinhVien);
+        sachDangMuonTableModel.setRowCount(0);
+        for (Sach sach : mListSach) {
+            System.out.println(sach.getTenSach());
+            Object[] row = {
+                sach.getMaSach(),
+                sach.getTenSach()
+            };
+            sachDangMuonTableModel.addRow(row);
+        }
         thuVienCardLayout.show(panelThuVienContainer, TRA_SACH_CARD_NAME);
     }//GEN-LAST:event_openTraSachTab
 
@@ -1833,15 +1925,15 @@ public class NewJFrame extends javax.swing.JFrame {
         smartCardWord.checkInOrOutVehicle(panelMain, cache.getXe(), new Function() {
 
             @Override
-            public void execute(Object...objects) {
+            public void execute(Object... objects) {
                 Xe xe = (Xe) objects[0];
                 Timestamp date = (Timestamp) objects[1];
                 cache.setXe(xe);
                 databaseHelper.updateTrangThaiXe(xe.getId(), xe.getStatus());
                 databaseHelper.addLogGuiXe(xe.getStatus(), cache.getSinhVien(), date);
-                String tt = (xe.getStatus() == Xe.DANG_GUI_STATUS)? "Đang gửi": "Không gửi";
+                String tt = (xe.getStatus() == Xe.DANG_GUI_STATUS) ? "Đang gửi" : "Không gửi";
                 labelTrangThaiXe.setText(tt);
-                String tt2 = (xe.getStatus() == Xe.DANG_GUI_STATUS)? "Lấy xe": "Gửi xe";
+                String tt2 = (xe.getStatus() == Xe.DANG_GUI_STATUS) ? "Lấy xe" : "Gửi xe";
                 buttonCheckXe.setText(tt2);
             }
         });
@@ -2028,6 +2120,19 @@ public class NewJFrame extends javax.swing.JFrame {
         } else {
             boolean check = smartCardWord.connectAndSelectDefaultApplet();
             if (check) {
+                smartCardWord.validCard(new Function() {
+
+                    @Override
+                    public void execute(Object... objects) {
+                        String id = (String) objects[0];
+                        if (!databaseHelper.isCardExisted(id)) {
+                            JOptionPane.showMessageDialog(parentPanel, "Card không thuộc quản lý hệ thống!");
+                            smartCardWord.disconnect();
+                            throw new RuntimeException("Card không thuộc quản lý hệ thống!");
+                        }
+                    }
+                });
+                
                 buttonConnect.setText("Disconnect");
                 labelCardStatus.setText("Card connected");
                 panelCardStatus.setBackground(Color.GREEN);
@@ -2045,6 +2150,8 @@ public class NewJFrame extends javax.swing.JFrame {
         buttonCleanInfo.setEnabled(enable);
         createPinButton.setEnabled(enable);
         buttonGuiXeTab.setEnabled(enable);
+        buttonMuonSach.setEnabled(enable);
+        buttonTraSach.setEnabled(enable);
     }
 
     private void setBackgroundColor() {
@@ -2232,7 +2339,7 @@ public class NewJFrame extends javax.swing.JFrame {
             Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     private void loadInfoVehicle() {
         SinhVien sv;
         if (cache.getSinhVien() == null) {
@@ -2241,13 +2348,13 @@ public class NewJFrame extends javax.swing.JFrame {
         } else {
             sv = cache.getSinhVien();
         }
-        
+
         buttonCheckXe.setEnabled(false);
         labelHangXe.setText(Constant.KHONG_CO);
         labelMauSacXe.setText(Constant.KHONG_CO);
         labelBienSoXe.setText(Constant.KHONG_CO);
         labelTrangThaiXe.setText(Constant.KHONG_CO);
-        
+
         if (sv != null) {
             Xe xe = databaseHelper.findXeBySinhVienId(sv.getId());
             System.out.println(xe.getStatus());
@@ -2257,9 +2364,9 @@ public class NewJFrame extends javax.swing.JFrame {
                 labelHangXe.setText(xe.getTenhangxe());
                 labelMauSacXe.setText(xe.getMausac());
                 labelBienSoXe.setText(xe.getBienso());
-                String tt = (xe.getStatus() == Xe.DANG_GUI_STATUS)? "Đang gửi": "Không gửi";
+                String tt = (xe.getStatus() == Xe.DANG_GUI_STATUS) ? "Đang gửi" : "Không gửi";
                 labelTrangThaiXe.setText(tt);
-                String tt2 = (xe.getStatus() == Xe.DANG_GUI_STATUS)? "Lấy xe": "Gửi xe";
+                String tt2 = (xe.getStatus() == Xe.DANG_GUI_STATUS) ? "Lấy xe" : "Gửi xe";
                 buttonCheckXe.setText(tt2);
             }
         }

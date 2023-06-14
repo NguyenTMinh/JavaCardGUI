@@ -429,4 +429,14 @@ public class SmartCardWord {
         
         return false;
     }
+    
+    public void validCard(Function function) {
+        ResponseDataWrapper wrapper = new ResponseDataWrapper();
+        boolean status = sendCommand(Constant.INS_VALID_ID_CARD, Constant.NO_VALUE, Constant.NO_VALUE, Constant.NO_DATA, wrapper);
+        if (status) {
+            String idCard = new String(wrapper.getDataAll());
+            System.out.println(idCard);
+            function.execute(idCard);
+        }
+    }
 }

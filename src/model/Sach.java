@@ -13,12 +13,14 @@ public class Sach {
     private String maSach;
     private String tenSach;
     private int trangThai;
+    private String maSV;
 
-    public Sach(int id, String maSach, String tenSach, int trangThai) {
+    public Sach(int id, String maSach, String tenSach, int trangThai, String maSV) {
         this.id = id;
         this.maSach = maSach;
         this.tenSach = tenSach;
         this.trangThai = trangThai;
+        this.maSV = maSV;
     }
 
     public int getId() {
@@ -53,6 +55,16 @@ public class Sach {
         this.trangThai = trangThai;
     }
 
-    
-    
+     public String getMaSV() {
+        return maSV;
+    }
+
+    public void setMaSV(String maSV) {
+        this.maSV = maSV;
+    }
+
+    @Override
+    public String toString() {
+        return "Sach{" + "id=" + id + ", maSach=" + maSach + ", tenSach=" + tenSach + ", trangThai=" + trangThai + ", maSV=" + maSV + '}';
+    }
 }

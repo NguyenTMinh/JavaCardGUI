@@ -2,11 +2,13 @@
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -73,6 +75,12 @@ public class DatabaseHelper {
     private static final String COLUMN_LS_THOI_GIAN = "thoigian";
     private static final String COLUMN_LS_CHIEU_XE = "chieu";
     
+    // card
+    private static final String TABLE_CARD = "card";
+    private static final String COLUMN_ID_CARD = "id";
+    private static final String COLUMN_MA_CARD = "mathe";
+    private static final String COLUMN_ID_SV= "sv";
+    
     private Connection connection;
     
     public DatabaseHelper() {
@@ -127,10 +135,11 @@ public class DatabaseHelper {
             
             while (resultSet.next()) {
                 Sach sach = new Sach(
-                        resultSet.getInt(COLUMN_ID_SACH), 
-                     resultSet.getString(COLUMN_MA_SACH), 
-                    resultSet.getString(COLUMN_TEN_SACH),
-                   resultSet.getInt(COLUMN_TRANG_THAI));
+                         resultSet.getInt(COLUMN_ID_SACH),
+                        resultSet.getString(COLUMN_MA_SACH),
+                        resultSet.getString(COLUMN_TEN_SACH),
+                        resultSet.getInt(COLUMN_TRANG_THAI),
+                        resultSet.getString(COLUMN_STUDENT_ID_SINHVIEN));
                 mList.add(sach);
             }
         } catch (SQLException ex) {
@@ -140,7 +149,140 @@ public class DatabaseHelper {
         return mList;
     }
     
+    public List<Sach> getSachChuaMuon() {
+        String findSachChuaMuon = "SELECT * FROM " + TABLE_SACH + " WHERE " + COLUMN_TRANG_THAI + " = 0";
+        List<Sach> mList = new ArrayList<>();
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(findSachChuaMuon);
 
+            while (resultSet.next()) {
+                Sach sach = new Sach(
+                        resultSet.getInt(COLUMN_ID_SACH),
+                        resultSet.getString(COLUMN_MA_SACH),
+                        resultSet.getString(COLUMN_TEN_SACH),
+                        resultSet.getInt(COLUMN_TRANG_THAI),
+                        resultSet.getString(COLUMN_STUDENT_ID_SINHVIEN));
+                mList.add(sach);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseHelper.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        System.out.println(mList.size());
+
+        return mList;
+    }
+    
+     public List<Sach> getAllSachDuocMuon(SinhVien sinhVien) {
+        String SachDuocMuon = "SELECT * FROM " + TABLE_SACH + " WHERE " + COLUMN_TRANG_THAI + " = 1 AND studentid = '" + sinhVien.getStudentId() + "'";
+        List<Sach> mList = new ArrayList<>();
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(SachDuocMuon);
+
+            while (resultSet.next()) {
+                Sach sach = new Sach(
+                        resultSet.getInt(COLUMN_ID_SACH),
+                        resultSet.getString(COLUMN_MA_SACH),
+                        resultSet.getString(COLUMN_TEN_SACH),
+                        resultSet.getInt(COLUMN_TRANG_THAI),
+                        resultSet.getString(COLUMN_STUDENT_ID_SINHVIEN));
+                mList.add(sach);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseHelper.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return mList;
+    }
+     
+     public Sach findSachById(int id) {
+        String findSach = "SELECT * FROM " + TABLE_SACH + " WHERE id = " + id;
+        System.out.println(findSach);
+
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(findSach);
+            Sach sach = null;
+            while (resultSet.next()) {
+                sach = new Sach(
+                        resultSet.getInt(COLUMN_ID_SACH),
+                        resultSet.getString(COLUMN_MA_SACH),
+                        resultSet.getString(COLUMN_TEN_SACH),
+                        resultSet.getInt(COLUMN_TRANG_THAI),
+                        resultSet.getString(COLUMN_STUDENT_ID_SINHVIEN));
+            }
+            return sach;
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseHelper.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return null;
+    }
+    
+     public void traSach(Sach sach) {
+        Sach s = findSachById(sach.getId());
+        if (s == null) {
+            System.out.println("Sach null");
+            return;
+        }
+
+        String updateQuery = "UPDATE " + TABLE_SACH + " SET " + COLUMN_TRANG_THAI + " = 0, studentid = '' WHERE id = " + sach.getId();
+        System.out.println("tra sach: " + updateQuery);
+        Statement statement;
+        try {
+            statement = connection.createStatement();
+            statement.executeUpdate(updateQuery);
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseHelper.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void updateMuonSach(Sach sach, SinhVien sinhVien) {
+        Sach s = findSachById(sach.getId());
+        if (s == null) {
+            System.out.println("Sach null");
+            return;
+        }
+
+        String updateQuery = "UPDATE " + TABLE_SACH + " SET " + COLUMN_TRANG_THAI + " = " + sach.getTrangThai() + ", studentid = '" + sinhVien.getStudentId() + "' WHERE id = " + sach.getId();
+        System.out.println("Update muon sach: " + updateQuery);
+        Statement statement;
+        try {
+            statement = connection.createStatement();
+            statement.executeUpdate(updateQuery);
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseHelper.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void putUpdateToHistory(Sach sach, SinhVien sinhVien) {
+        Sach s = findSachById(sach.getId());
+        if (s == null) {
+            return;
+        }
+
+        LocalDate currentDate = LocalDate.now();
+        Date sqlDate = Date.valueOf(currentDate);
+        System.out.println(sqlDate);
+        String insertQuery = "INSERT INTO " + TABLE_LICH_SU_MUON_SACH + " ( masach, tensach, trangthai, thoigian, studentid) VALUE ( ?, ?, ?, ?, ?)";
+        System.out.println(insertQuery);
+        try (PreparedStatement statement = connection.prepareStatement(insertQuery)) {
+            statement.setString(1, sach.getMaSach());
+            statement.setString(2, sach.getTenSach());
+            statement.setInt(3, sach.getTrangThai());
+            statement.setDate(4, sqlDate);
+            statement.setString(5, sinhVien.getStudentId());
+            statement.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseHelper.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    // ========================== sv =================================
     public List<SinhVien> getAllSinhVien() {
         String findAllSinhVien = "SELECT * FROM " + TABLE_SINHVIEN;
         List<SinhVien> list = new ArrayList<>();
@@ -327,5 +469,24 @@ public class DatabaseHelper {
         }
         
         return null;
+    }
+    
+    // =============== card ===================\
+    public boolean isCardExisted(String mathe) {
+        String query = "SELECT * FROM " + TABLE_CARD + " WHERE " + COLUMN_MA_CARD + "='" + mathe + "'";
+        System.out.println(query);
+        
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+            
+            resultSet.next();
+            
+            return resultSet.getRow() > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseHelper.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return false;
     }
 }

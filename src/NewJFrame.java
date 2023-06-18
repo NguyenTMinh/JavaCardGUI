@@ -1,4 +1,5 @@
 
+import com.mysql.jdbc.StringUtils;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -13,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -23,6 +25,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javafx.util.Pair;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -33,6 +36,7 @@ import model.LichSuMuonSach;
 import model.LichsuGuiXe;
 import model.Sach;
 import model.SinhVien;
+import model.SmartCard;
 import model.Xe;
 import util.Util;
 
@@ -107,8 +111,8 @@ public class NewJFrame extends javax.swing.JFrame {
     private List<Sach> mListSach;
     private List<LichSuMuonSach> mListLichSuMuonSach;
     private List<LichsuGuiXe> lichSuGuiXe;
-    private SinhVien sinhVienCard;
-    private Sach sachCard;
+    private SinhVien sinhVienCard; // bien temp luu khi click chon 1 item tren bang
+    private Sach sachCard; // bien temp luu khi click chon 1 item tren bang
     private DataCache cache;
 
     /**
@@ -292,12 +296,15 @@ public class NewJFrame extends javax.swing.JFrame {
         buttonDoMuonSach.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int selectedRow = tableMuonSach.getSelectedRow();
-                SinhVien sinhVien = smartCardWord.getInfoCard();
-                muonSachTableModel.removeRow(selectedRow);
-                sachCard.setTrangThai(1);
-                databaseHelper.updateMuonSach(sachCard, sinhVien);
-                databaseHelper.putUpdateToHistory(sachCard, sinhVien);
+                if (checkPin()) {
+                    // TODO luu lich su muon sach xuong the
+                    int selectedRow = tableMuonSach.getSelectedRow();
+                    SinhVien sinhVien = smartCardWord.getInfoCard();
+                    muonSachTableModel.removeRow(selectedRow);
+                    sachCard.setTrangThai(1);
+                    databaseHelper.updateMuonSach(sachCard, sinhVien);
+                    databaseHelper.putUpdateToHistory(sachCard, sinhVien);
+                }
             }
         });
         
@@ -311,12 +318,15 @@ public class NewJFrame extends javax.swing.JFrame {
         buttonDoTraSach.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int selectedRow = tableSachDangMuon.getSelectedRow();
-                SinhVien sinhVien = smartCardWord.getInfoCard();
-                sachDangMuonTableModel.removeRow(selectedRow);
-                sachCard.setTrangThai(0);
-                databaseHelper.updateMuonSach(sachCard, sinhVien);
-                databaseHelper.putUpdateToHistory(sachCard, sinhVien);
+                if (checkPin()) {
+                    // TODO luu lich su muon sach xuong the
+                    int selectedRow = tableSachDangMuon.getSelectedRow();
+                    SinhVien sinhVien = smartCardWord.getInfoCard();
+                    sachDangMuonTableModel.removeRow(selectedRow);
+                    sachCard.setTrangThai(0);
+                    databaseHelper.updateMuonSach(sachCard, sinhVien);
+                    databaseHelper.putUpdateToHistory(sachCard, sinhVien);
+                }
             }
         });
 
@@ -622,33 +632,32 @@ public class NewJFrame extends javax.swing.JFrame {
         panelUnlockCardLayout.setHorizontalGroup(
             panelUnlockCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelUnlockCardLayout.createSequentialGroup()
-                .addGap(135, 135, 135)
-                .addComponent(jLabel9)
-                .addGap(18, 18, 18)
-                .addComponent(unlockCardTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(356, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelUnlockCardLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(panelUnlockCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelUnlockCardLayout.createSequentialGroup()
-                        .addComponent(unlockButton, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(312, 312, 312))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelUnlockCardLayout.createSequentialGroup()
-                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(303, 303, 303))))
+                    .addGroup(panelUnlockCardLayout.createSequentialGroup()
+                        .addGap(358, 358, 358)
+                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(panelUnlockCardLayout.createSequentialGroup()
+                        .addGap(172, 172, 172)
+                        .addComponent(jLabel9)
+                        .addGap(18, 18, 18)
+                        .addComponent(unlockCardTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(panelUnlockCardLayout.createSequentialGroup()
+                        .addGap(373, 373, 373)
+                        .addComponent(unlockButton, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(319, Short.MAX_VALUE))
         );
         panelUnlockCardLayout.setVerticalGroup(
             panelUnlockCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelUnlockCardLayout.createSequentialGroup()
-                .addGap(60, 60, 60)
+                .addContainerGap()
                 .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(116, 116, 116)
+                .addGap(86, 86, 86)
                 .addGroup(panelUnlockCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(unlockCardTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel9))
-                .addGap(42, 42, 42)
+                    .addComponent(jLabel9)
+                    .addComponent(unlockCardTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(103, 103, 103)
                 .addComponent(unlockButton, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(238, Short.MAX_VALUE))
+                .addContainerGap(254, Short.MAX_VALUE))
         );
 
         panelAdminContainer.add(panelUnlockCard, "card2");
@@ -1724,7 +1733,7 @@ public class NewJFrame extends javax.swing.JFrame {
         oldPinTextField.setText(null);
         newPinTextField.setText(null);
         newPinConfirmTextField.setText(null);
-        cardLayout.show(panelSVContainer, CHANGE_PIN_CARD_NAME);
+        svCardLayout.show(panelSVContainer, CHANGE_PIN_CARD_NAME);
     }//GEN-LAST:event_openChangePinPanel
 
     private void adminFunction(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_adminFunction
@@ -1878,7 +1887,9 @@ public class NewJFrame extends javax.swing.JFrame {
 
     private void flushInfoCard(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_flushInfoCard
         // TODO add your handling code here:
-        flushInfoCard();
+        if (flushInfoCard()) {
+            assignCardToStudent();
+        }
     }//GEN-LAST:event_flushInfoCard
 
     private void openCleanInfoTab(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openCleanInfoTab
@@ -1922,21 +1933,23 @@ public class NewJFrame extends javax.swing.JFrame {
 
     private void checkVehicle(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkVehicle
         // TODO add your handling code here:
-        smartCardWord.checkInOrOutVehicle(panelMain, cache.getXe(), new Function() {
+        if (checkPin()) {
+            smartCardWord.checkInOrOutVehicle(panelMain, cache.getXe(), new Function() {
 
-            @Override
-            public void execute(Object... objects) {
-                Xe xe = (Xe) objects[0];
-                Timestamp date = (Timestamp) objects[1];
-                cache.setXe(xe);
-                databaseHelper.updateTrangThaiXe(xe.getId(), xe.getStatus());
-                databaseHelper.addLogGuiXe(xe.getStatus(), cache.getSinhVien(), date);
-                String tt = (xe.getStatus() == Xe.DANG_GUI_STATUS) ? "Đang gửi" : "Không gửi";
-                labelTrangThaiXe.setText(tt);
-                String tt2 = (xe.getStatus() == Xe.DANG_GUI_STATUS) ? "Lấy xe" : "Gửi xe";
-                buttonCheckXe.setText(tt2);
-            }
-        });
+                @Override
+                public void execute(Object... objects) {
+                    Xe xe = (Xe) objects[0];
+                    Timestamp date = (Timestamp) objects[1];
+                    cache.setXe(xe);
+                    databaseHelper.updateTrangThaiXe(xe.getId(), xe.getStatus());
+                    databaseHelper.addLogGuiXe(xe.getStatus(), cache.getSinhVien(), date);
+                    String tt = (xe.getStatus() == Xe.DANG_GUI_STATUS) ? "Đang gửi" : "Không gửi";
+                    labelTrangThaiXe.setText(tt);
+                    String tt2 = (xe.getStatus() == Xe.DANG_GUI_STATUS) ? "Lấy xe" : "Gửi xe";
+                    buttonCheckXe.setText(tt2);
+                }
+            });
+        }
     }//GEN-LAST:event_checkVehicle
 
     /**
@@ -2125,20 +2138,43 @@ public class NewJFrame extends javax.swing.JFrame {
                     @Override
                     public void execute(Object... objects) {
                         String id = (String) objects[0];
-                        if (!databaseHelper.isCardExisted(id)) {
+                        SmartCard card = databaseHelper.findCardByMathe(id);
+                        if (card == null) {
                             JOptionPane.showMessageDialog(parentPanel, "Card không thuộc quản lý hệ thống!");
                             smartCardWord.disconnect();
                             throw new RuntimeException("Card không thuộc quản lý hệ thống!");
+                        } else {
+                            if (card.getPublicKeyModulus() != null) {
+                                try {
+                                    if (smartCardWord.verifyCardByRSA(card)) {
+                                        System.out.println(123);
+                                        cache.setSmartCard(card);
+                                        buttonConnect.setText("Disconnect");
+                                        labelCardStatus.setText("Card connected");
+                                        panelCardStatus.setBackground(Color.GREEN);
+
+                                        JOptionPane.showMessageDialog(rootPane, "Kết nối thành công");
+                                        enableFunction(true);
+                                    } else {
+                                        JOptionPane.showMessageDialog(rootPane, "Thẻ không hợp lệ!");
+                                    }
+                                } catch (Exception e) {
+                                    smartCardWord.disconnect();
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                cache.setSmartCard(card);
+                                buttonConnect.setText("Disconnect");
+                                labelCardStatus.setText("Card connected");
+                                panelCardStatus.setBackground(Color.GREEN);
+                                JOptionPane.showMessageDialog(rootPane, "Kết nối thành công");
+                                enableFunction(true);
+                            }
                         }
                     }
                 });
                 
-                buttonConnect.setText("Disconnect");
-                labelCardStatus.setText("Card connected");
-                panelCardStatus.setBackground(Color.GREEN);
-
-                JOptionPane.showMessageDialog(rootPane, "Kết nối thành công");
-                enableFunction(true);
+                
             }
         }
     }
@@ -2166,6 +2202,7 @@ public class NewJFrame extends javax.swing.JFrame {
         panelFlushInfo.setBackground(Color.WHITE);
         panelEditInfo.setBackground(Color.WHITE);
         panelNothing.setBackground(Color.WHITE);
+        panelCleanInfo.setBackground(Color.WHITE);
         // SV
         panelChangePin.setBackground(Color.WHITE);
         panelNothing3.setBackground(Color.WHITE);
@@ -2190,29 +2227,35 @@ public class NewJFrame extends javax.swing.JFrame {
         newPinTextField.setText(null);
     }
 
-    private void flushInfoCard() {
+    private boolean flushInfoCard() {
         String pin = pinTextField.getText();
+        boolean res = false;
         String pinConfirm = pinConfirmTextField.getText();
+        
         if (pin.length() != 4) {
             JOptionPane.showMessageDialog(parentPanel, "Mã PIN cần có độ dài là 4");
-            return;
+            return res;
         }
         if (!pinConfirm.equals(pin)) {
             JOptionPane.showMessageDialog(parentPanel, "Mã PIN không giống, kiểm tra lại");
-            return;
+            return res;
         }
         if (!pin.matches("\\d+")) {
             JOptionPane.showMessageDialog(parentPanel, "Mã PIN chỉ chứa số 0-9");
-            return;
+            return res;
         }
         if (sinhVienCard == null) {
             JOptionPane.showMessageDialog(parentPanel, "Vui lòng chọn sinh viên để nạp thông tin");
-            return;
+            return res;
         }
+        
         try {
-            boolean res = smartCardWord.flushCardInfo(sinhVienCard, Constant.INS_FLUSH_DATA);
+            res = smartCardWord.flushCardInfo(sinhVienCard, Constant.INS_FLUSH_DATA);
             if (res) {
-                smartCardWord.createPin(pin);
+                res = smartCardWord.createPin(pin);
+                if (res) {
+                    cache.setSinhVien(sinhVienCard);
+                }
                 JOptionPane.showMessageDialog(parentPanel, "Nạp thông tin thành công");
             } else {
                 JOptionPane.showMessageDialog(parentPanel, "Nạp thông tin thát bại, vui lòng thử lại");
@@ -2220,6 +2263,8 @@ public class NewJFrame extends javax.swing.JFrame {
         } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        return res;
     }
 
     private void editInfoCard() {
@@ -2370,5 +2415,29 @@ public class NewJFrame extends javax.swing.JFrame {
                 buttonCheckXe.setText(tt2);
             }
         }
+    }
+    
+    private boolean assignCardToStudent() {
+        boolean res = false;
+        // Lay public key cua the luu db
+        Pair<BigInteger, BigInteger> publicKey = smartCardWord.getRsaPublicKey();
+        
+        System.out.println("here");
+        
+        if (publicKey != null) {
+            SmartCard card = cache.getSmartCard();
+            card.setPublicKeyModulus(publicKey.getKey());
+            card.setPublicKeyExponent(publicKey.getValue());
+            card.setSv(cache.getSinhVien().getId());
+            databaseHelper.updateCard(card);
+            res = true;
+        }
+        
+        return res;
+    }
+    
+    private boolean checkPin() {
+        String input = JOptionPane.showInputDialog(panelMain, "Nhập mã pin:");
+        return smartCardWord.checkPin(input);
     }
 }

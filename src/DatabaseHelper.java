@@ -1,4 +1,6 @@
 
+import java.math.BigInteger;
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
@@ -14,6 +16,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import model.SmartCard;
 import model.LichSuMuonSach;
 import model.LichsuGuiXe;
 import model.Sach;
@@ -79,7 +82,9 @@ public class DatabaseHelper {
     private static final String TABLE_CARD = "card";
     private static final String COLUMN_ID_CARD = "id";
     private static final String COLUMN_MA_CARD = "mathe";
-    private static final String COLUMN_ID_SV= "sv";
+    private static final String COLUMN_ID_SV_CARD= "sv";
+    private static final String COLUMN_PUBLIC_KEY_M = "pub_key_modulus";
+    private static final String COLUMN_PUBLIC_KEY_E = "pub_key_exponent";
     
     private Connection connection;
     
@@ -483,6 +488,89 @@ public class DatabaseHelper {
             resultSet.next();
             
             return resultSet.getRow() > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseHelper.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return false;
+    }
+    
+    public SmartCard findCardById(int id) {
+        String query = "SELECT * FROM card WHERE id=" + id;
+        SmartCard smartCard = null;
+        
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+            
+            while (resultSet.next()) {
+                String mod = resultSet.getString(COLUMN_PUBLIC_KEY_M);
+                String exp = resultSet.getString(COLUMN_PUBLIC_KEY_E);
+                BigInteger modB = null;
+                BigInteger expB = null;
+                if (mod != null) {
+                    modB = new BigInteger(mod);
+                }
+                if (exp != null) {
+                    expB = new BigInteger(exp);
+                }
+                
+                smartCard = new SmartCard(resultSet.getInt(COLUMN_ID_CARD), 
+                        resultSet.getString(COLUMN_MA_CARD), 
+                        resultSet.getInt(COLUMN_ID_SV_CARD),
+                        modB,
+                        expB);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseHelper.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return smartCard;
+    }
+    
+    public SmartCard findCardByMathe(String mathe) {
+        String query = "SELECT * FROM card WHERE mathe=" + mathe;
+        SmartCard smartCard = null;
+        
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+            
+            while (resultSet.next()) {
+                String mod = resultSet.getString(COLUMN_PUBLIC_KEY_M);
+                String exp = resultSet.getString(COLUMN_PUBLIC_KEY_E);
+                BigInteger modB = null;
+                BigInteger expB = null;
+                if (mod != null) {
+                    modB = new BigInteger(mod);
+                }
+                if (exp != null) {
+                    expB = new BigInteger(exp);
+                }
+                
+                smartCard = new SmartCard(resultSet.getInt(COLUMN_ID_CARD), 
+                        resultSet.getString(COLUMN_MA_CARD), 
+                        resultSet.getInt(COLUMN_ID_SV_CARD), 
+                        modB,
+                        expB);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseHelper.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return smartCard;
+    }
+    
+    public boolean updateCard(SmartCard card) {
+        String query = "UPDATE card SET " + COLUMN_ID_SV_CARD + "=" + card.getSv() + "," + COLUMN_PUBLIC_KEY_M
+                + "='" + card.getPublicKeyModulus().toString() + "', " + COLUMN_PUBLIC_KEY_E
+                + "='" + card.getPublicKeyExponent().toString() + "' WHERE id=" + card.getId();
+        
+        try {
+            Statement statement = connection.createStatement();
+            int rows = statement.executeUpdate(query);
+            
+            return rows > 0;
         } catch (SQLException ex) {
             Logger.getLogger(DatabaseHelper.class.getName()).log(Level.SEVERE, null, ex);
         }

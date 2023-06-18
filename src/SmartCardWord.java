@@ -1,6 +1,17 @@
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.KeyFactory;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.Signature;
+import java.security.SignatureException;
+import java.security.interfaces.RSAPublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.RSAPublicKeySpec;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -8,8 +19,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.util.Pair;
 import javax.smartcardio.Card;
 import javax.smartcardio.CardChannel;
 import javax.smartcardio.CardException;
@@ -21,6 +34,7 @@ import javax.smartcardio.*;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import model.SinhVien;
+import model.SmartCard;
 import model.Xe;
 
 /*
@@ -438,5 +452,60 @@ public class SmartCardWord {
             System.out.println(idCard);
             function.execute(idCard);
         }
+    }
+    
+    public Pair<BigInteger, BigInteger> getRsaPublicKey() {
+        Pair<BigInteger, BigInteger> publicKey = null;
+        ResponseDataWrapper wrapper = new ResponseDataWrapper();
+        boolean status = 
+                sendCommand(Constant.INS_GET_PUB_KEY_RSA, Constant.PARAM_MODULUS, Constant.NO_VALUE, Constant.NO_DATA, wrapper);
+        if (status) {
+            BigInteger modulus = new BigInteger(1, wrapper.getDataAll()); 
+            status = sendCommand(Constant.INS_GET_PUB_KEY_RSA, 
+                    Constant.PARAM_EXPONENT, Constant.NO_VALUE, Constant.NO_DATA, wrapper);
+            if (status) {
+                BigInteger exponent = new BigInteger(wrapper.getDataAll());
+                publicKey = new Pair<>(modulus, exponent);
+                System.out.println("value init: " + modulus + "," + exponent);
+            }
+        }
+        
+        return publicKey;
+    }
+    
+    public boolean verifyCardByRSA(SmartCard card) throws NoSuchAlgorithmException, InvalidKeySpecException, SignatureException, InvalidKeyException{
+        // Tao chuoi ngau nhien de challenge card
+        int length = 10; 
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            char randomChar = (char) (random.nextInt(26) + 'A');
+            sb.append(randomChar);
+        }
+        String randomString = sb.toString();
+        
+       ResponseDataWrapper wrapper = new ResponseDataWrapper();
+       boolean status = sendCommand(Constant.INS_CHALLENGE_CARD, 
+               Constant.NO_VALUE, Constant.NO_VALUE, randomString.getBytes(), wrapper);
+       if (status) {
+           byte[] modulusBytes = card.getPublicKeyModulus().toByteArray();
+           byte[] exponentBytes = card.getPublicKeyExponent().toByteArray();
+           BigInteger modulus = new BigInteger(modulusBytes);
+           BigInteger exponent = new BigInteger(exponentBytes);
+           RSAPublicKeySpec keySpec = new RSAPublicKeySpec(modulus, exponent);
+           
+           KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+           PublicKey key = (RSAPublicKey) keyFactory.generatePublic(keySpec);
+           Signature signature = Signature.getInstance("SHA1withRSA");
+           
+           MessageDigest digest = MessageDigest.getInstance("SHA-1");
+           byte[] hash = digest.digest(randomString.getBytes());
+           
+           signature.initVerify(key);
+           signature.update(hash);
+           status = signature.verify(wrapper.getDataAll());
+       }
+       
+       return status;
     }
 }

@@ -1,5 +1,6 @@
 
 import model.SinhVien;
+import model.SmartCard;
 import model.Xe;
 
 /*
@@ -16,6 +17,7 @@ import model.Xe;
 public class DataCache {
     private SinhVien sinhVien; // Luu thong tin doi tuong sinh vien the dang 
     private Xe xe;
+    private SmartCard smartCard;
 
     public SinhVien getSinhVien() {
         return sinhVien;
@@ -37,4 +39,13 @@ public class DataCache {
         sinhVien = null;
         xe = null;
     }
+
+    public SmartCard getSmartCard() {
+        return smartCard;
+    }
+
+    public void setSmartCard(SmartCard smartCard) {
+        this.smartCard = smartCard;
+    }
+    
 }

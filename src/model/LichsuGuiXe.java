@@ -95,11 +95,11 @@ public class LichsuGuiXe {
     public void setMausac(String mausac) {
         this.mausac = mausac;
     }
-    
-    
-    
+
     @Override
-     public String toString() {
-        return "Lichsu{"+ id + idsinhvien + date + '"' + '}' ;
+    public String toString() {
+        return "LichsuGuiXe{" + "id=" + id + ", idsinhvien=" + idsinhvien + ", name=" + name + ", studentId=" + studentId + ", bienso=" + bienso + ", mausac=" + mausac + ", date=" + date + ", chieu=" + chieu + '}';
     }
+    
+    
 }

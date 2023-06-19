@@ -17,6 +17,8 @@ public class LichSuMuonSach {
     private int trangThai;
     private Date thoiGian;
     private String maSV;
+    // them
+    private int idSach;
 
     public LichSuMuonSach(int id, String maSach, String tenSach, int trangThai, Date thoiGian, String maSV) {
         this.id = id;
@@ -74,7 +76,19 @@ public class LichSuMuonSach {
     public void setMaSV(String maSV) {
         this.maSV = maSV;
     }
-    
+
+    public int getIdSach() {
+        return idSach;
+    }
+
+    public void setIdSach(int idSach) {
+        this.idSach = idSach;
+    }
+
+    @Override
+    public String toString() {
+        return "LichSuMuonSach{" + "id=" + id + ", maSach=" + maSach + ", tenSach=" + tenSach + ", trangThai=" + trangThai + ", thoiGian=" + thoiGian + ", maSV=" + maSV + ", idSach=" + idSach + '}';
+    }
     
     
 }

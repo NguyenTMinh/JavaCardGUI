@@ -204,7 +204,6 @@ public class DatabaseHelper {
      
      public Sach findSachById(int id) {
         String findSach = "SELECT * FROM " + TABLE_SACH + " WHERE id = " + id;
-        System.out.println(findSach);
 
         try {
             Statement statement = connection.createStatement();
@@ -234,7 +233,6 @@ public class DatabaseHelper {
         }
 
         String updateQuery = "UPDATE " + TABLE_SACH + " SET " + COLUMN_TRANG_THAI + " = 0, studentid = '' WHERE id = " + sach.getId();
-        System.out.println("tra sach: " + updateQuery);
         Statement statement;
         try {
             statement = connection.createStatement();
@@ -253,7 +251,6 @@ public class DatabaseHelper {
         }
 
         String updateQuery = "UPDATE " + TABLE_SACH + " SET " + COLUMN_TRANG_THAI + " = " + sach.getTrangThai() + ", studentid = '" + sinhVien.getStudentId() + "' WHERE id = " + sach.getId();
-        System.out.println("Update muon sach: " + updateQuery);
         Statement statement;
         try {
             statement = connection.createStatement();
@@ -272,9 +269,7 @@ public class DatabaseHelper {
 
         LocalDate currentDate = LocalDate.now();
         Date sqlDate = Date.valueOf(currentDate);
-        System.out.println(sqlDate);
         String insertQuery = "INSERT INTO " + TABLE_LICH_SU_MUON_SACH + " ( masach, tensach, trangthai, thoigian, studentid) VALUE ( ?, ?, ?, ?, ?)";
-        System.out.println(insertQuery);
         try (PreparedStatement statement = connection.prepareStatement(insertQuery)) {
             statement.setString(1, sach.getMaSach());
             statement.setString(2, sach.getTenSach());
@@ -385,7 +380,6 @@ public class DatabaseHelper {
                 + "phone="+ "'" + sinhVien.getPhone()+ "'" + ","
                 + "studentid="+ "'" + sinhVien.getStudentId()+ "'" + ","
                 + "class="+ "'" + sinhVien.getClassSV()+ "' " + "WHERE id=" + sinhVien.getId();
-        System.out.println(updateQuery);
         Statement statement;
         try {
             statement = connection.createStatement();
@@ -479,7 +473,6 @@ public class DatabaseHelper {
     // =============== card ===================\
     public boolean isCardExisted(String mathe) {
         String query = "SELECT * FROM " + TABLE_CARD + " WHERE " + COLUMN_MA_CARD + "='" + mathe + "'";
-        System.out.println(query);
         
         try {
             Statement statement = connection.createStatement();

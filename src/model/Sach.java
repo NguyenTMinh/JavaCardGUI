@@ -9,6 +9,9 @@ package model;
  * @author Vanni
  */
 public class Sach {
+    public static final int KHONG_MUON_STATUS = 0; // xe dang duoc gui o bai
+    public static final int DANG_MUON_STATUS = 1; // xe dang khong duoc gui o bai
+    
     private int id;
     private String maSach;
     private String tenSach;

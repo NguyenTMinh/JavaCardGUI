@@ -17,6 +17,7 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
@@ -33,6 +34,9 @@ import javax.smartcardio.TerminalFactory;
 import javax.smartcardio.*;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import model.LichSuMuonSach;
+import model.LichsuGuiXe;
+import model.Sach;
 import model.SinhVien;
 import model.SmartCard;
 import model.Xe;
@@ -507,5 +511,120 @@ public class SmartCardWord {
        }
        
        return status;
+    }
+    
+    public boolean updateBookHistory(Sach sach, JPanel parent) {
+       int statusSach = (sach.getTrangThai()== Sach.DANG_MUON_STATUS)? Sach.KHONG_MUON_STATUS: Sach.DANG_MUON_STATUS;
+       Calendar calendar = Calendar.getInstance();
+       Timestamp date = new Timestamp(calendar.getTimeInMillis());
+       byte[] thoiGian = new byte[7];
+       thoiGian[Constant.INDEX_NGAY] = (byte) calendar.getTime().getDay();
+       thoiGian[Constant.INDEX_THANG] = (byte) calendar.getTime().getMonth();
+       String year = String.valueOf(calendar.getTime().getYear());
+       String year0 = year.substring(0, 2);
+       String year1 = year.substring(2);
+       thoiGian[Constant.INDEX_NAM_0] = (byte) Integer.parseInt(year0);
+       thoiGian[Constant.INDEX_NAM_1] = (byte) Integer.parseInt(year1);
+       thoiGian[Constant.INDEX_GIO] = (byte) calendar.getTime().getHours();
+       thoiGian[Constant.INDEX_PHUT] = (byte) calendar.getTime().getMinutes();
+       thoiGian[Constant.INDEX_GIAY] = (byte) calendar.getTime().getSeconds();
+       
+       ResponseDataWrapper wrapper = new ResponseDataWrapper();
+       boolean status = sendCommand(Constant.INS_BOOK, (byte) sach.getTrangThai(), (byte) sach.getId(), thoiGian, wrapper);
+       
+       if (status) {
+           if (sach.getTrangThai()== Sach.DANG_MUON_STATUS) {
+               JOptionPane.showMessageDialog(parent, "Mượn thành công");
+           } else {
+               JOptionPane.showMessageDialog(parent, "Trả thành công");
+           }
+       }
+       
+       return status;
+    }
+    
+    public List<LichsuGuiXe> getLichsuGuiXe() {
+        List<LichsuGuiXe> list = new ArrayList<>();
+        ResponseDataWrapper wrapper = new ResponseDataWrapper();
+        boolean status = sendCommand(Constant.INS_GET_LS_XE, 
+                Constant.NO_VALUE, Constant.NO_VALUE, Constant.NO_DATA, wrapper);
+        
+        if (status && wrapper.getDataAll().length > 7) {
+            byte[] data = wrapper.getDataAll();
+            list.add(getLSXeFromData(data));
+            
+            while (data[0] == Constant.RESPONSE_HAS_NEXT) {
+                status = sendCommand(Constant.INS_GET_LS_XE, 
+                    Constant.NO_VALUE, Constant.NO_VALUE, Constant.NO_DATA, wrapper);
+                
+                if (wrapper.getDataAll().length < 7) {
+                    break;
+                }
+                data = wrapper.getDataAll();
+                list.add(getLSXeFromData(data));
+            }
+        }
+        
+        return list;
+    }
+    
+    private LichsuGuiXe getLSXeFromData(byte[] data) {
+        int ngay = data[2];
+        int thang = data[3];
+        int nam_1 = data[4];
+        int nam_2 = data[5];
+        int gio = data[6];
+        int phut = data[7];
+        int giay = data[8];
+        String date = nam_1 + "" + nam_2;
+        int nam = Integer.parseInt(date);
+        Timestamp t = new Timestamp(nam, thang, ngay, gio, phut, giay, 0);
+        
+        return new LichsuGuiXe(0, 0, null, null, null, null, t, (int)data[1]);
+    }
+    
+    public List<LichSuMuonSach> getLichsuMuonSach() {
+        List<LichSuMuonSach> list = new ArrayList<>();
+        ResponseDataWrapper wrapper = new ResponseDataWrapper();
+        boolean status = sendCommand(Constant.INS_GET_LS_SACH, 
+                Constant.NO_VALUE, Constant.NO_VALUE, Constant.NO_DATA, wrapper);
+        
+        if (status && wrapper.getDataAll().length > 7) {
+            byte[] data = wrapper.getDataAll();
+            list.add(getLSSachFromData(data));
+            
+            while (data[0] == Constant.RESPONSE_HAS_NEXT) {
+                System.out.println("here");
+                status = sendCommand(Constant.INS_GET_LS_SACH, 
+                    Constant.NO_VALUE, Constant.NO_VALUE, Constant.NO_DATA, wrapper);
+                if (wrapper.getDataAll().length < 7) {
+                    break;
+                }
+                data = wrapper.getDataAll();
+                list.add(getLSSachFromData(data));
+            }
+        }
+        
+        System.out.println(list.size());
+        
+        return list;
+    }
+    
+    private LichSuMuonSach getLSSachFromData(byte[] data) {
+        int ngay = data[2];
+        int thang = data[3];
+        int nam_1 = data[4];
+        int nam_2 = data[5];
+        int gio = data[6];
+        int phut = data[7];
+        int giay = data[8];
+        String date = nam_1 + "" + nam_2;
+        int nam = Integer.parseInt(date);
+        Timestamp t = new Timestamp(nam, thang, ngay, gio, phut, giay, 0);
+        Date time = new Date(t.getTime());
+        
+        LichSuMuonSach ls = new LichSuMuonSach(0, null, null, (int)data[1], time, null);
+        ls.setIdSach(data[9]);
+        return ls;
     }
 }

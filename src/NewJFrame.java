@@ -57,6 +57,8 @@ public class NewJFrame extends javax.swing.JFrame {
     private static final String[] COLUMN_TABLE_SACH_THU_VIEN = {"Mã sách", "Tên sách", "Trạng thái"};
     private static final String[] COLUMN_TABLE_LICH_SU_MUON_SACH = {"Mã sách", "Tên sách", "Trạng thái", "Thời gian", "Sinh viên"};
     private static final String[] COLUMN_TABLE_SACH_DANG_MUON = {"Mã sách", "Tên sách"};
+    private static final String[] COLUMN_TABLE_LICH_SU_GUI_XE_SV = {"Thời gian", "Trạng thái"};
+    private static final String[] COLUMN_TABLE_LICH_SU_MUON_SACH_SV = {"Mã sách", "Tên sách", "Trạng thái", "Thời gian"};
 
     private static final String MAIN_CARD_NAME = "card6";
     // admin function
@@ -67,8 +69,10 @@ public class NewJFrame extends javax.swing.JFrame {
     private static final String NOTHING_NAME = "card6";
     // sv function
     private static final String SV_CARD_NAME = "card9";
-    private static final String CHANGE_PIN_CARD_NAME = "card4";
+    private static final String CHANGE_PIN_CARD_NAME = "card5";
     private static final String NOTHING_3_NAME = "card6";
+    private static final String CARD_INFO_NAME = "card4";
+    private static final String HISTORY_NAME = "card7";
     // gui xe function
     private static final String GUI_XE_FUNCTION_CARD_NAME = "card7";
     private static final String GUI_XE_CARD_NAME = "card3";
@@ -86,6 +90,10 @@ public class NewJFrame extends javax.swing.JFrame {
     // SV function var
     private Object[][] sinhvienData = {};
     private DefaultTableModel sinhvienTableModel;
+    private Object[][] historyXe = {};
+    private DefaultTableModel historyXeTableModel;
+    private Object[][] historySach = {};
+    private DefaultTableModel historySachTableModel;
     // GuiXe Function var
     private Object[][] guiXeData = {};
     private DefaultTableModel guiXeTableModel;
@@ -147,6 +155,11 @@ public class NewJFrame extends javax.swing.JFrame {
         tableMuonSach.setModel(muonSachTableModel);
         sachDangMuonTableModel = new DefaultTableModel(sachDangMuonData, COLUMN_TABLE_SACH_DANG_MUON);
         tableSachDangMuon.setModel(sachDangMuonTableModel);
+        // Khoi tao bang lich su trong tab sv
+        historyXeTableModel = new DefaultTableModel(historyXe, COLUMN_TABLE_LICH_SU_GUI_XE_SV); 
+        table_HistoryXe.setModel(historyXeTableModel);
+        historySachTableModel = new DefaultTableModel(historySach, COLUMN_TABLE_LICH_SU_MUON_SACH_SV); 
+        table_HistoryBook.setModel(historySachTableModel);
 
         // set false cho viec resize lai bang
         tableLichSuGuiXe.getTableHeader().setReorderingAllowed(false);
@@ -155,13 +168,18 @@ public class NewJFrame extends javax.swing.JFrame {
         tableSach.getTableHeader().setReorderingAllowed(false);
         tableSachDangMuon.getTableHeader().setReorderingAllowed(false);
         tableSinhVien.getTableHeader().setReorderingAllowed(false);
-        //
+        table_HistoryXe.getTableHeader().setReorderingAllowed(false);
+        table_HistoryBook.getTableHeader().setReorderingAllowed(false);
+        //khong cho resize
         tableLichSuGuiXe.getTableHeader().setResizingAllowed(false);
         tableLichSuSach.getTableHeader().setResizingAllowed(false);
         tableMuonSach.getTableHeader().setResizingAllowed(false);
         tableSach.getTableHeader().setResizingAllowed(false);
         tableSachDangMuon.getTableHeader().setResizingAllowed(false);
         tableSinhVien.getTableHeader().setResizingAllowed(false);
+        table_HistoryBook.getTableHeader().setResizingAllowed(false);
+        table_HistoryXe.getTableHeader().setResizingAllowed(false);
+        
         // set khong cho click len table de sua
         tableLichSuGuiXe.setDefaultEditor(Object.class, null);
         tableLichSuSach.setDefaultEditor(Object.class, null);
@@ -169,6 +187,9 @@ public class NewJFrame extends javax.swing.JFrame {
         tableSach.setDefaultEditor(Object.class, null);
         tableSachDangMuon.setDefaultEditor(Object.class, null);
         tableSinhVien.setDefaultEditor(Object.class, null);
+        table_HistoryBook.setDefaultEditor(Object.class, null);
+        table_HistoryXe.setDefaultEditor(Object.class, null);
+        
         // set event listener len row table sinh vien
         tableSinhVien.addMouseListener(new MouseAdapter() {
 
@@ -197,7 +218,6 @@ public class NewJFrame extends javax.swing.JFrame {
         buttonTimKiemS.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("CLICKED");
                 mListSach = databaseHelper.getAllSach();
 
                 String tenSach = textFieldTimKiemS.getText().toString().toLowerCase();
@@ -227,8 +247,6 @@ public class NewJFrame extends javax.swing.JFrame {
         buttonTimKiemLS.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                System.out.println("CLICKED");
                 mListLichSuMuonSach = databaseHelper.getAllHistory();
 
                 String tenSach = textFieldTimKiemLS.getText().toString().toLowerCase();
@@ -237,7 +255,6 @@ public class NewJFrame extends javax.swing.JFrame {
                         .filter(object -> object.getTenSach().toLowerCase().contains(tenSach))
                         .collect(Collectors.toList());
 
-                System.out.println(mListHistoryByBookName.size());
                 if (mListLichSuMuonSach.size() != 0) {
                     lichSuSachTableModel.setRowCount(0);
 
@@ -304,6 +321,7 @@ public class NewJFrame extends javax.swing.JFrame {
                     sachCard.setTrangThai(1);
                     databaseHelper.updateMuonSach(sachCard, sinhVien);
                     databaseHelper.putUpdateToHistory(sachCard, sinhVien);
+                    smartCardWord.updateBookHistory(sachCard, parentPanel);
                 }
             }
         });
@@ -326,6 +344,7 @@ public class NewJFrame extends javax.swing.JFrame {
                     sachCard.setTrangThai(0);
                     databaseHelper.updateMuonSach(sachCard, sinhVien);
                     databaseHelper.putUpdateToHistory(sachCard, sinhVien);
+                    smartCardWord.updateBookHistory(sachCard, parentPanel);
                 }
             }
         });
@@ -465,9 +484,27 @@ public class NewJFrame extends javax.swing.JFrame {
         buttonDoTraSach = new javax.swing.JButton();
         panelSVFunction = new javax.swing.JPanel();
         backButton5 = new javax.swing.JButton();
+        button_CardInfoSV = new javax.swing.JButton();
+        openChangePinButtion = new javax.swing.JButton();
+        button_History = new javax.swing.JButton();
         panelSVContainer = new javax.swing.JPanel();
         panelNothing3 = new javax.swing.JPanel();
         labelLogo3 = new javax.swing.JLabel();
+        panelCardInfoSV = new javax.swing.JPanel();
+        labelAvatarSV1 = new javax.swing.JLabel();
+        textFileldEditNameSV1 = new javax.swing.JTextField();
+        jLabel13 = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        rButtonGenderMale1 = new javax.swing.JRadioButton();
+        rButtonGenderFemale1 = new javax.swing.JRadioButton();
+        jLabel15 = new javax.swing.JLabel();
+        textFieldNgaySinh1 = new javax.swing.JTextField();
+        jLabel32 = new javax.swing.JLabel();
+        tf_SoDienThoaiSV1 = new javax.swing.JTextField();
+        jLabel36 = new javax.swing.JLabel();
+        tf_Masinhvien1 = new javax.swing.JTextField();
+        jLabel37 = new javax.swing.JLabel();
+        tf_LopSV1 = new javax.swing.JTextField();
         panelChangePin = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
@@ -477,7 +514,13 @@ public class NewJFrame extends javax.swing.JFrame {
         oldPinTextField = new javax.swing.JPasswordField();
         newPinTextField = new javax.swing.JPasswordField();
         newPinConfirmTextField = new javax.swing.JPasswordField();
-        openChangePinButtion = new javax.swing.JButton();
+        panelHistorySV = new javax.swing.JPanel();
+        jLabel38 = new javax.swing.JLabel();
+        jScrollPane7 = new javax.swing.JScrollPane();
+        table_HistoryXe = new javax.swing.JTable();
+        jLabel39 = new javax.swing.JLabel();
+        jScrollPane8 = new javax.swing.JScrollPane();
+        table_HistoryBook = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new javax.swing.OverlayLayout(getContentPane()));
@@ -1546,6 +1589,27 @@ public class NewJFrame extends javax.swing.JFrame {
             }
         });
 
+        button_CardInfoSV.setText("Thông tin");
+        button_CardInfoSV.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showInfo(evt);
+            }
+        });
+
+        openChangePinButtion.setText("Đổi PIN");
+        openChangePinButtion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openChangePinPanel(evt);
+            }
+        });
+
+        button_History.setText("Lịch sử");
+        button_History.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showHistory(evt);
+            }
+        });
+
         panelSVContainer.setLayout(new java.awt.CardLayout());
 
         javax.swing.GroupLayout panelNothing3Layout = new javax.swing.GroupLayout(panelNothing3);
@@ -1566,6 +1630,88 @@ public class NewJFrame extends javax.swing.JFrame {
         );
 
         panelSVContainer.add(panelNothing3, "card6");
+
+        jLabel13.setText("Họ tên:");
+
+        jLabel14.setText("Giới tính:");
+
+        rButtonGenderMale1.setText("Nam");
+
+        rButtonGenderFemale1.setText("Nữ");
+
+        jLabel15.setText("Ngày sinh:");
+
+        jLabel32.setText("Số điện thoại:");
+
+        jLabel36.setText("Mã sinh viên:");
+
+        jLabel37.setText("Lớp:");
+
+        javax.swing.GroupLayout panelCardInfoSVLayout = new javax.swing.GroupLayout(panelCardInfoSV);
+        panelCardInfoSV.setLayout(panelCardInfoSVLayout);
+        panelCardInfoSVLayout.setHorizontalGroup(
+            panelCardInfoSVLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelCardInfoSVLayout.createSequentialGroup()
+                .addGap(26, 26, 26)
+                .addComponent(labelAvatarSV1, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(48, 48, 48)
+                .addGroup(panelCardInfoSVLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(textFileldEditNameSV1)
+                    .addComponent(tf_SoDienThoaiSV1)
+                    .addComponent(tf_Masinhvien1)
+                    .addComponent(tf_LopSV1)
+                    .addGroup(panelCardInfoSVLayout.createSequentialGroup()
+                        .addGroup(panelCardInfoSVLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel37)
+                            .addComponent(jLabel36)
+                            .addComponent(jLabel13)
+                            .addComponent(jLabel14)
+                            .addGroup(panelCardInfoSVLayout.createSequentialGroup()
+                                .addComponent(rButtonGenderMale1)
+                                .addGap(18, 18, 18)
+                                .addComponent(rButtonGenderFemale1))
+                            .addComponent(jLabel15)
+                            .addComponent(jLabel32))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(textFieldNgaySinh1))
+                .addGap(26, 26, 26))
+        );
+        panelCardInfoSVLayout.setVerticalGroup(
+            panelCardInfoSVLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelCardInfoSVLayout.createSequentialGroup()
+                .addGap(83, 83, 83)
+                .addComponent(jLabel13)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panelCardInfoSVLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelCardInfoSVLayout.createSequentialGroup()
+                        .addComponent(textFileldEditNameSV1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel14)
+                        .addGap(9, 9, 9)
+                        .addGroup(panelCardInfoSVLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(rButtonGenderMale1)
+                            .addComponent(rButtonGenderFemale1))
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel15)
+                        .addGap(12, 12, 12)
+                        .addComponent(textFieldNgaySinh1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel32))
+                    .addComponent(labelAvatarSV1, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(tf_SoDienThoaiSV1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel36)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tf_Masinhvien1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel37)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tf_LopSV1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(84, 84, 84))
+        );
+
+        panelSVContainer.add(panelCardInfoSV, "card4");
 
         panelChangePin.setPreferredSize(new java.awt.Dimension(800, 600));
 
@@ -1633,14 +1779,74 @@ public class NewJFrame extends javax.swing.JFrame {
                 .addContainerGap(181, Short.MAX_VALUE))
         );
 
-        panelSVContainer.add(panelChangePin, "card4");
+        panelSVContainer.add(panelChangePin, "card5");
 
-        openChangePinButtion.setText("Đổi PIN");
-        openChangePinButtion.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                openChangePinPanel(evt);
+        jLabel38.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel38.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel38.setText("LỊCH SỬ XE");
+
+        table_HistoryXe.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
             }
-        });
+        ));
+        jScrollPane7.setViewportView(table_HistoryXe);
+
+        jLabel39.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel39.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel39.setText("LỊCH SỬ SÁCH");
+
+        table_HistoryBook.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane8.setViewportView(table_HistoryBook);
+
+        javax.swing.GroupLayout panelHistorySVLayout = new javax.swing.GroupLayout(panelHistorySV);
+        panelHistorySV.setLayout(panelHistorySVLayout);
+        panelHistorySVLayout.setHorizontalGroup(
+            panelHistorySVLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelHistorySVLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel39, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(318, 318, 318))
+            .addGroup(panelHistorySVLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panelHistorySVLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane7)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelHistorySVLayout.createSequentialGroup()
+                        .addGap(0, 333, Short.MAX_VALUE)
+                        .addComponent(jLabel38, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(322, 322, 322))
+                    .addComponent(jScrollPane8)))
+        );
+        panelHistorySVLayout.setVerticalGroup(
+            panelHistorySVLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelHistorySVLayout.createSequentialGroup()
+                .addComponent(jLabel38, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel39, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 42, Short.MAX_VALUE))
+        );
+
+        panelSVContainer.add(panelHistorySV, "card7");
 
         javax.swing.GroupLayout panelSVFunctionLayout = new javax.swing.GroupLayout(panelSVFunction);
         panelSVFunction.setLayout(panelSVFunctionLayout);
@@ -1650,7 +1856,9 @@ public class NewJFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(panelSVFunctionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(backButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(openChangePinButtion, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(openChangePinButtion, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(button_CardInfoSV, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(button_History, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panelSVContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -1662,6 +1870,10 @@ public class NewJFrame extends javax.swing.JFrame {
                 .addGroup(panelSVFunctionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panelSVFunctionLayout.createSequentialGroup()
                         .addComponent(openChangePinButtion, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(button_CardInfoSV, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(button_History, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(backButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(panelSVContainer, javax.swing.GroupLayout.DEFAULT_SIZE, 574, Short.MAX_VALUE))
@@ -1851,11 +2063,9 @@ public class NewJFrame extends javax.swing.JFrame {
 
     private void openMuonSachTab(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openMuonSachTab
         // TODO add your handling code here:
-        System.out.println("MUON SACH");
         mListSach = databaseHelper.getSachChuaMuon();
         muonSachTableModel.setRowCount(0);
         for (Sach sach : mListSach) {
-            System.out.println(sach.getTenSach());
             Object[] row = {
                 sach.getMaSach(),
                 sach.getTenSach(),
@@ -1875,7 +2085,6 @@ public class NewJFrame extends javax.swing.JFrame {
         mListSach = databaseHelper.getAllSachDuocMuon(sinhVien);
         sachDangMuonTableModel.setRowCount(0);
         for (Sach sach : mListSach) {
-            System.out.println(sach.getTenSach());
             Object[] row = {
                 sach.getMaSach(),
                 sach.getTenSach()
@@ -1928,6 +2137,12 @@ public class NewJFrame extends javax.swing.JFrame {
         String pin = textFieldPinCleanInfo.getText();
         if (smartCardWord.resetInfo(pin, panelMain)) {
             cache.setSinhVien(null);
+            cache.getSmartCard().setPublicKeyExponent(null);
+            cache.getSmartCard().setPublicKeyModulus(null);
+            databaseHelper.updateCard(cache.getSmartCard());
+            cache.setSmartCard(null);
+            cache.setXe(null);
+            
         }
     }//GEN-LAST:event_resetInfo
 
@@ -1951,6 +2166,32 @@ public class NewJFrame extends javax.swing.JFrame {
             });
         }
     }//GEN-LAST:event_checkVehicle
+
+    private void showInfo(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showInfo
+        // TODO add your handling code here:
+        showInfoCard();
+        svCardLayout.show(panelSVContainer, CARD_INFO_NAME);
+    }//GEN-LAST:event_showInfo
+
+    private void showHistory(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showHistory
+        // TODO add your handling code here:
+        List<LichsuGuiXe> ls = smartCardWord.getLichsuGuiXe();
+        historyXeTableModel.setRowCount(0);
+        for (LichsuGuiXe l: ls) {
+            Object[] obj = {l.getDate().toString(), ((l.getChieu()==Xe.DANG_GUI_STATUS)?"Gửi xe":"Lấy xe")};
+            historyXeTableModel.addRow(obj);
+        }
+        
+        List<LichSuMuonSach> ls1 = smartCardWord.getLichsuMuonSach();
+        historySachTableModel.setRowCount(0);
+        for (LichSuMuonSach l: ls1) {
+            Sach sach = databaseHelper.findSachById(l.getIdSach());
+            Object[] obj = {sach.getMaSach(), sach.getTenSach(), 
+                (l.getTrangThai()==Sach.DANG_MUON_STATUS)?"Mượn sách":"Trả sách",l.getThoiGian().toString()};
+            historySachTableModel.addRow(obj);
+        }
+        svCardLayout.show(panelSVContainer, HISTORY_NAME);
+    }//GEN-LAST:event_showHistory
 
     /**
      * @param args the command line arguments
@@ -2016,12 +2257,17 @@ public class NewJFrame extends javax.swing.JFrame {
     private javax.swing.JButton buttonTimKiemS;
     private javax.swing.JButton buttonTraSach;
     private javax.swing.JButton buttonUnlockCard;
+    private javax.swing.JButton button_CardInfoSV;
+    private javax.swing.JButton button_History;
     private javax.swing.JButton confirmButton;
     private javax.swing.JButton createPinButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
@@ -2040,9 +2286,14 @@ public class NewJFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel30;
     private javax.swing.JLabel jLabel31;
+    private javax.swing.JLabel jLabel32;
     private javax.swing.JLabel jLabel33;
     private javax.swing.JLabel jLabel34;
     private javax.swing.JLabel jLabel35;
+    private javax.swing.JLabel jLabel36;
+    private javax.swing.JLabel jLabel37;
+    private javax.swing.JLabel jLabel38;
+    private javax.swing.JLabel jLabel39;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -2055,7 +2306,10 @@ public class NewJFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
+    private javax.swing.JScrollPane jScrollPane7;
+    private javax.swing.JScrollPane jScrollPane8;
     private javax.swing.JLabel labelAvatarSV;
+    private javax.swing.JLabel labelAvatarSV1;
     private javax.swing.JLabel labelBienSoXe;
     private javax.swing.JLabel labelCardStatus;
     private javax.swing.JLabel labelHangXe;
@@ -2073,6 +2327,7 @@ public class NewJFrame extends javax.swing.JFrame {
     private javax.swing.JButton openChangePinButtion;
     private javax.swing.JPanel panelAdminContainer;
     private javax.swing.JPanel panelAdminFunction;
+    private javax.swing.JPanel panelCardInfoSV;
     private javax.swing.JPanel panelCardStatus;
     private javax.swing.JPanel panelChangePin;
     private javax.swing.JPanel panelCleanInfo;
@@ -2081,6 +2336,7 @@ public class NewJFrame extends javax.swing.JFrame {
     private javax.swing.JPanel panelGuiXe;
     private javax.swing.JPanel panelGuiXeContainer;
     private javax.swing.JPanel panelGuiXeFunction;
+    private javax.swing.JPanel panelHistorySV;
     private javax.swing.JPanel panelLichSuGuiXe;
     private javax.swing.JPanel panelLichSuSach;
     private javax.swing.JPanel panelMain;
@@ -2100,22 +2356,31 @@ public class NewJFrame extends javax.swing.JFrame {
     private javax.swing.JPasswordField pinConfirmTextField;
     private javax.swing.JPasswordField pinTextField;
     private javax.swing.JRadioButton rButtonGenderFemale;
+    private javax.swing.JRadioButton rButtonGenderFemale1;
     private javax.swing.JRadioButton rButtonGenderMale;
+    private javax.swing.JRadioButton rButtonGenderMale1;
     private javax.swing.JTable tableLichSuGuiXe;
     private javax.swing.JTable tableLichSuSach;
     private javax.swing.JTable tableMuonSach;
     private javax.swing.JTable tableSach;
     private javax.swing.JTable tableSachDangMuon;
     private javax.swing.JTable tableSinhVien;
+    private javax.swing.JTable table_HistoryBook;
+    private javax.swing.JTable table_HistoryXe;
     private javax.swing.JTextField textFieldNgaySinh;
+    private javax.swing.JTextField textFieldNgaySinh1;
     private javax.swing.JTextField textFieldPinCleanInfo;
     private javax.swing.JTextField textFieldTimKiemLS;
     private javax.swing.JTextField textFieldTimKiemMS;
     private javax.swing.JTextField textFieldTimKiemS;
     private javax.swing.JTextField textFileldEditNameSV;
+    private javax.swing.JTextField textFileldEditNameSV1;
     private javax.swing.JTextField tf_LopSV;
+    private javax.swing.JTextField tf_LopSV1;
     private javax.swing.JTextField tf_Masinhvien;
+    private javax.swing.JTextField tf_Masinhvien1;
     private javax.swing.JTextField tf_SoDienThoaiSV;
+    private javax.swing.JTextField tf_SoDienThoaiSV1;
     private javax.swing.JButton unlockButton;
     private javax.swing.JTextField unlockCardTextField;
     // End of variables declaration//GEN-END:variables
@@ -2147,7 +2412,6 @@ public class NewJFrame extends javax.swing.JFrame {
                             if (card.getPublicKeyModulus() != null) {
                                 try {
                                     if (smartCardWord.verifyCardByRSA(card)) {
-                                        System.out.println(123);
                                         cache.setSmartCard(card);
                                         buttonConnect.setText("Disconnect");
                                         labelCardStatus.setText("Card connected");
@@ -2206,6 +2470,8 @@ public class NewJFrame extends javax.swing.JFrame {
         // SV
         panelChangePin.setBackground(Color.WHITE);
         panelNothing3.setBackground(Color.WHITE);
+        panelCardInfoSV.setBackground(Color.WHITE);
+        panelHistorySV.setBackground(Color.WHITE);
         // Gui xe
         panelGuiXe.setBackground(Color.WHITE);
         panelLichSuGuiXe.setBackground(Color.WHITE);
@@ -2402,7 +2668,6 @@ public class NewJFrame extends javax.swing.JFrame {
 
         if (sv != null) {
             Xe xe = databaseHelper.findXeBySinhVienId(sv.getId());
-            System.out.println(xe.getStatus());
             if (xe != null) {
                 cache.setXe(xe);
                 buttonCheckXe.setEnabled(true);
@@ -2422,8 +2687,6 @@ public class NewJFrame extends javax.swing.JFrame {
         // Lay public key cua the luu db
         Pair<BigInteger, BigInteger> publicKey = smartCardWord.getRsaPublicKey();
         
-        System.out.println("here");
-        
         if (publicKey != null) {
             SmartCard card = cache.getSmartCard();
             card.setPublicKeyModulus(publicKey.getKey());
@@ -2439,5 +2702,53 @@ public class NewJFrame extends javax.swing.JFrame {
     private boolean checkPin() {
         String input = JOptionPane.showInputDialog(panelMain, "Nhập mã pin:");
         return smartCardWord.checkPin(input);
+    }
+    
+    private void showInfoCard() {
+        SinhVien sv;
+        if (cache.getSinhVien() == null) {
+            sv = smartCardWord.getInfoCard();
+            cache.setSinhVien(sv);
+        } else {
+            sv = cache.getSinhVien();
+        }
+
+        if (sv != null) { 
+            byte[] imageBytes = Base64.getDecoder().decode(sv.getAvatar());
+            InputStream inputStream = new ByteArrayInputStream(imageBytes);
+            try {
+                BufferedImage image = ImageIO.read(inputStream);
+                Image dimg = image.getScaledInstance(labelAvatarSV.getWidth(), labelAvatarSV.getHeight(), Image.SCALE_SMOOTH);
+                // set anh dai dien
+                labelAvatarSV1.setIcon(new ImageIcon(dimg));
+                // set ten
+                textFileldEditNameSV1.setText(sv.getName());
+                // set gioi tinh
+                if (sv.getGender() == 0) {
+                    rButtonGenderMale1.setSelected(true);
+                    rButtonGenderFemale1.setSelected(false);
+                } else {
+                    rButtonGenderMale1.setSelected(false);
+                    rButtonGenderFemale1.setSelected(true);
+                }
+                // set ngay sinh
+                textFieldNgaySinh1.setText(sv.getDate().toString());
+                // set so dien thoai
+                tf_SoDienThoaiSV1.setText(sv.getPhone());
+                // set ma sinh vien
+                tf_Masinhvien1.setText(sv.getStudentId());
+                // set lop
+                tf_LopSV1.setText(sv.getClassSV());
+            } catch (IOException ex) {
+                Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            labelAvatarSV1.setIcon(null);
+            textFileldEditNameSV1.setText(null);
+            textFieldNgaySinh1.setText(null);
+            tf_SoDienThoaiSV1.setText(null);
+            tf_Masinhvien1.setText(null);
+            tf_LopSV1.setText(null);
+        }
     }
 }

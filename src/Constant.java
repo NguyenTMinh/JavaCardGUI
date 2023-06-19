@@ -40,6 +40,12 @@ public class Constant {
     public static final byte INS_GET_PUB_KEY_RSA = (byte)0x10;
     // lay rsa key
     public static final byte INS_CHALLENGE_CARD= (byte)0x11;
+    // muon sach
+    public static final byte INS_BOOK = (byte)0x12;
+    // ls xe
+    public static final byte INS_GET_LS_XE = (byte)0x13;
+    // ls sach
+    public static final byte INS_GET_LS_SACH = (byte)0x14;
     
     // Response
     public static final byte RESPONSE_PIN_ALREADY_CREATED = (byte)0x2A;
@@ -50,6 +56,7 @@ public class Constant {
     public static final byte RESPONSE_RESET_INFO_SUCCESS = (byte)0x2F;
     public static final byte RESPONSE_RESET_INFO_FAIL = (byte)0x30;
     public static final byte RESPONSE_GUI_XE_OK = (byte)0x31;
+    public static final byte RESPONSE_HAS_NEXT = (byte)0x32;
     public static final byte NO_VALUE = (byte)0x00;
     public static final byte[] NO_DATA = new byte[1];
     

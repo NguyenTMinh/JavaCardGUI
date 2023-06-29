@@ -156,9 +156,9 @@ public class NewJFrame extends javax.swing.JFrame {
         sachDangMuonTableModel = new DefaultTableModel(sachDangMuonData, COLUMN_TABLE_SACH_DANG_MUON);
         tableSachDangMuon.setModel(sachDangMuonTableModel);
         // Khoi tao bang lich su trong tab sv
-        historyXeTableModel = new DefaultTableModel(historyXe, COLUMN_TABLE_LICH_SU_GUI_XE_SV); 
+        historyXeTableModel = new DefaultTableModel(historyXe, COLUMN_TABLE_LICH_SU_GUI_XE_SV);
         table_HistoryXe.setModel(historyXeTableModel);
-        historySachTableModel = new DefaultTableModel(historySach, COLUMN_TABLE_LICH_SU_MUON_SACH_SV); 
+        historySachTableModel = new DefaultTableModel(historySach, COLUMN_TABLE_LICH_SU_MUON_SACH_SV);
         table_HistoryBook.setModel(historySachTableModel);
 
         // set false cho viec resize lai bang
@@ -179,7 +179,7 @@ public class NewJFrame extends javax.swing.JFrame {
         tableSinhVien.getTableHeader().setResizingAllowed(false);
         table_HistoryBook.getTableHeader().setResizingAllowed(false);
         table_HistoryXe.getTableHeader().setResizingAllowed(false);
-        
+
         // set khong cho click len table de sua
         tableLichSuGuiXe.setDefaultEditor(Object.class, null);
         tableLichSuSach.setDefaultEditor(Object.class, null);
@@ -189,7 +189,7 @@ public class NewJFrame extends javax.swing.JFrame {
         tableSinhVien.setDefaultEditor(Object.class, null);
         table_HistoryBook.setDefaultEditor(Object.class, null);
         table_HistoryXe.setDefaultEditor(Object.class, null);
-        
+
         // set event listener len row table sinh vien
         tableSinhVien.addMouseListener(new MouseAdapter() {
 
@@ -316,30 +316,39 @@ public class NewJFrame extends javax.swing.JFrame {
                 if (checkPin()) {
                     // TODO luu lich su muon sach xuong the
                     int selectedRow = tableMuonSach.getSelectedRow();
-                    SinhVien sinhVien = smartCardWord.getInfoCard();
+                    SinhVien sinhVien = cache.getSinhVien();
+                    if (sinhVien == null) {
+                        sinhVien = smartCardWord.getInfoCard();
+                        cache.setSinhVien(sinhVien);
+                    }
                     muonSachTableModel.removeRow(selectedRow);
                     sachCard.setTrangThai(1);
+                    System.out.println(sinhVien == null);
                     databaseHelper.updateMuonSach(sachCard, sinhVien);
                     databaseHelper.putUpdateToHistory(sachCard, sinhVien);
                     smartCardWord.updateBookHistory(sachCard, parentPanel);
                 }
             }
         });
-        
+
         tableSachDangMuon.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 sachCard = mListSach.get(tableSachDangMuon.getSelectedRow());
             }
         });
-        
+
         buttonDoTraSach.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (checkPin()) {
                     // TODO luu lich su muon sach xuong the
                     int selectedRow = tableSachDangMuon.getSelectedRow();
-                    SinhVien sinhVien = smartCardWord.getInfoCard();
+                    SinhVien sinhVien = cache.getSinhVien();
+                    if (sinhVien == null) {
+                        sinhVien = smartCardWord.getInfoCard();
+                        cache.setSinhVien(sinhVien);
+                    }
                     sachDangMuonTableModel.removeRow(selectedRow);
                     sachCard.setTrangThai(0);
                     databaseHelper.updateMuonSach(sachCard, sinhVien);
@@ -2078,7 +2087,11 @@ public class NewJFrame extends javax.swing.JFrame {
 
     private void openTraSachTab(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openTraSachTab
         // TODO add your handling code here:
-        SinhVien sinhVien = smartCardWord.getInfoCard();
+        SinhVien sinhVien = cache.getSinhVien();
+        if (sinhVien == null) {
+            sinhVien = smartCardWord.getInfoCard();
+            cache.setSinhVien(sinhVien);
+        }            
         labelHoTenTraSach.setText(sinhVien.getName());
         labelMSVTraSach.setText(sinhVien.getStudentId());
 
@@ -2140,9 +2153,7 @@ public class NewJFrame extends javax.swing.JFrame {
             cache.getSmartCard().setPublicKeyExponent(null);
             cache.getSmartCard().setPublicKeyModulus(null);
             databaseHelper.updateCard(cache.getSmartCard());
-            cache.setSmartCard(null);
             cache.setXe(null);
-            
         }
     }//GEN-LAST:event_resetInfo
 
@@ -2177,17 +2188,17 @@ public class NewJFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         List<LichsuGuiXe> ls = smartCardWord.getLichsuGuiXe();
         historyXeTableModel.setRowCount(0);
-        for (LichsuGuiXe l: ls) {
-            Object[] obj = {l.getDate().toString(), ((l.getChieu()==Xe.DANG_GUI_STATUS)?"Gửi xe":"Lấy xe")};
+        for (LichsuGuiXe l : ls) {
+            Object[] obj = {l.getDate().toString(), ((l.getChieu() == Xe.DANG_GUI_STATUS) ? "Gửi xe" : "Lấy xe")};
             historyXeTableModel.addRow(obj);
         }
-        
+
         List<LichSuMuonSach> ls1 = smartCardWord.getLichsuMuonSach();
         historySachTableModel.setRowCount(0);
-        for (LichSuMuonSach l: ls1) {
+        for (LichSuMuonSach l : ls1) {
             Sach sach = databaseHelper.findSachById(l.getIdSach());
-            Object[] obj = {sach.getMaSach(), sach.getTenSach(), 
-                (l.getTrangThai()==Sach.DANG_MUON_STATUS)?"Mượn sách":"Trả sách",l.getThoiGian().toString()};
+            Object[] obj = {sach.getMaSach(), sach.getTenSach(),
+                (l.getTrangThai() == Sach.DANG_MUON_STATUS) ? "Mượn sách" : "Trả sách", l.getThoiGian().toString()};
             historySachTableModel.addRow(obj);
         }
         svCardLayout.show(panelSVContainer, HISTORY_NAME);
@@ -2437,8 +2448,7 @@ public class NewJFrame extends javax.swing.JFrame {
                         }
                     }
                 });
-                
-                
+
             }
         }
     }
@@ -2497,7 +2507,7 @@ public class NewJFrame extends javax.swing.JFrame {
         String pin = pinTextField.getText();
         boolean res = false;
         String pinConfirm = pinConfirmTextField.getText();
-        
+
         if (pin.length() != 4) {
             JOptionPane.showMessageDialog(parentPanel, "Mã PIN cần có độ dài là 4");
             return res;
@@ -2514,7 +2524,7 @@ public class NewJFrame extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(parentPanel, "Vui lòng chọn sinh viên để nạp thông tin");
             return res;
         }
-        
+
         try {
             res = smartCardWord.flushCardInfo(sinhVienCard, Constant.INS_FLUSH_DATA);
             if (res) {
@@ -2529,7 +2539,7 @@ public class NewJFrame extends javax.swing.JFrame {
         } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         return res;
     }
 
@@ -2681,29 +2691,31 @@ public class NewJFrame extends javax.swing.JFrame {
             }
         }
     }
-    
+
     private boolean assignCardToStudent() {
         boolean res = false;
         // Lay public key cua the luu db
         Pair<BigInteger, BigInteger> publicKey = smartCardWord.getRsaPublicKey();
-        
+
         if (publicKey != null) {
             SmartCard card = cache.getSmartCard();
+            System.out.println("Minh: " + publicKey.getKey() + "\n" + publicKey.getValue());
+            System.out.println(card == null);
             card.setPublicKeyModulus(publicKey.getKey());
             card.setPublicKeyExponent(publicKey.getValue());
             card.setSv(cache.getSinhVien().getId());
             databaseHelper.updateCard(card);
             res = true;
         }
-        
+
         return res;
     }
-    
+
     private boolean checkPin() {
         String input = JOptionPane.showInputDialog(panelMain, "Nhập mã pin:");
         return smartCardWord.checkPin(input);
     }
-    
+
     private void showInfoCard() {
         SinhVien sv;
         if (cache.getSinhVien() == null) {
@@ -2713,7 +2725,7 @@ public class NewJFrame extends javax.swing.JFrame {
             sv = cache.getSinhVien();
         }
 
-        if (sv != null) { 
+        if (sv != null) {
             byte[] imageBytes = Base64.getDecoder().decode(sv.getAvatar());
             InputStream inputStream = new ByteArrayInputStream(imageBytes);
             try {

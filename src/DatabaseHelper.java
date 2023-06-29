@@ -96,7 +96,6 @@ public class DatabaseHelper {
             String password) {
         Connection conn = null;
         try {
-//            Class.forName("com.mysql.jdbc.Driver");
             conn = DriverManager.getConnection(dbURL, userName, password);
             System.out.println("connect successfully!");
         } catch (Exception ex) {
@@ -501,10 +500,10 @@ public class DatabaseHelper {
                 String exp = resultSet.getString(COLUMN_PUBLIC_KEY_E);
                 BigInteger modB = null;
                 BigInteger expB = null;
-                if (mod != null) {
+                if (mod != null && !mod.equals("NULL")) {
                     modB = new BigInteger(mod);
                 }
-                if (exp != null) {
+                if (exp != null && !exp.equals("NULL")) {
                     expB = new BigInteger(exp);
                 }
                 
@@ -534,10 +533,10 @@ public class DatabaseHelper {
                 String exp = resultSet.getString(COLUMN_PUBLIC_KEY_E);
                 BigInteger modB = null;
                 BigInteger expB = null;
-                if (mod != null) {
+                if (mod != null && !mod.equals("NULL")) {
                     modB = new BigInteger(mod);
                 }
-                if (exp != null) {
+                if (exp != null && !exp.equals("NULL")) {
                     expB = new BigInteger(exp);
                 }
                 
@@ -555,9 +554,10 @@ public class DatabaseHelper {
     }
     
     public boolean updateCard(SmartCard card) {
+        String s = (card.getPublicKeyModulus()==null)?null:card.getPublicKeyModulus().toString();
         String query = "UPDATE card SET " + COLUMN_ID_SV_CARD + "=" + card.getSv() + "," + COLUMN_PUBLIC_KEY_M
-                + "='" + card.getPublicKeyModulus().toString() + "', " + COLUMN_PUBLIC_KEY_E
-                + "='" + card.getPublicKeyExponent().toString() + "' WHERE id=" + card.getId();
+                + "='" + ((card.getPublicKeyModulus()==null)?"NULL":card.getPublicKeyModulus().toString()) + "', " + COLUMN_PUBLIC_KEY_E
+                + "='" + ((card.getPublicKeyExponent()==null)?"NULL":card.getPublicKeyExponent().toString()) + "' WHERE id=" + card.getId();
         
         try {
             Statement statement = connection.createStatement();

@@ -360,6 +360,9 @@ public class SmartCardWord {
                     String avatar = new String(data.getDataAll());
                     status = sendCommand(Constant.INS_GET_DATA, Constant.PARAM_HO_TEN, Constant.NO_VALUE, Constant.NO_DATA, data);
                     if (status) {
+                        for(byte b: data.getDataAll()) {
+                            System.out.print(b + " ");
+                        }
                         String name = new String(data.getDataAll(), StandardCharsets.UTF_8);
                         status = sendCommand(Constant.INS_GET_DATA, Constant.PARAM_GIOI_TINH, Constant.NO_VALUE, Constant.NO_DATA, data);
                         if (status) {
@@ -470,7 +473,6 @@ public class SmartCardWord {
             if (status) {
                 BigInteger exponent = new BigInteger(wrapper.getDataAll());
                 publicKey = new Pair<>(modulus, exponent);
-                System.out.println("value init: " + modulus + "," + exponent);
             }
         }
         
